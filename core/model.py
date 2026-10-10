@@ -29,8 +29,6 @@ class SDFDecoder(nn.Module):
                                nn.Linear(width, width), nn.Softplus(beta=10))
         self.b = nn.Sequential(nn.Linear(width + dim, width), nn.Softplus(beta=10),
                                nn.Linear(width, width), nn.Softplus(beta=10), nn.Linear(width, 1))
-        nn.init.normal_(self.b[-1].weight, std=0.01)
-        nn.init.zeros_(self.b[-1].bias)
 
     def forward(self, q, latent, phase):
         ph = q[..., :1] * 0 + phase

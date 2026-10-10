@@ -17,7 +17,7 @@ def digest(path):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--data', type=Path, default=Path('data/plane_sdf'))
+    parser.add_argument('--data', type=Path, default=Path('data/plane_sdf_shell'))
     parser.add_argument('--output', type=Path, default=Path('preflight/single_patient'))
     parser.add_argument('--case-id', default='002')
     parser.add_argument('--validation-case-id', default='012')

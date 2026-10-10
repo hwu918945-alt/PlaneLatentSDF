@@ -5,10 +5,13 @@ import numpy as np
 import torch
 from core.data import load_case
 from core.model import PlaneField
+from core.sampling import encode_case
 from core.mesh import stack_basis, volume_to_mesh, write_obj
 
 
 def extract(model, case, out, resolution=160, chunk=32768, cap_stack=False):
+    if cap_stack and 'boundary_endo' in case:
+        raise ValueError('Artificial axial caps are disabled for the shell protocol')
     basis = stack_basis(case['axis'].cpu().numpy())
     contour_stack = case['boundary'].cpu().numpy().reshape(-1, 3) @ basis
     lower, upper = contour_stack.min(0), contour_stack.max(0)
@@ -21,7 +24,7 @@ def extract(model, case, out, resolution=160, chunk=32768, cap_stack=False):
     shape = (resolution,)*3
     volume = np.empty(np.prod(shape), np.float32)
     with torch.no_grad():
-        latent = model.encoder(case['q'],case['sdf2d'],case['phase'])
+        latent = encode_case(model, case)
         for start in range(0,len(volume),chunk):
             stop = min(len(volume),start+chunk)
             index = np.stack(np.unravel_index(np.arange(start,stop),shape),-1)
@@ -37,7 +40,7 @@ def extract(model, case, out, resolution=160, chunk=32768, cap_stack=False):
     write_obj(out,vertices,faces)
     report.update(case_id=case['case_id'],phase=case['phase'],artificial_axial_caps=cap_stack,resolution=resolution,
                   grid_spacing_mm=((upper-lower)/(resolution-1)*case['scale_mm']).tolist(),
-                  anatomy='LV_epi_envelope',full_anatomical_extent_verified=False,
+                  anatomy=case.get('anatomy','LV_epi_envelope'),full_anatomical_extent_verified=False,
                   coordinate_frame='v11_5static aligned oriented millimetres',
                   bbox_mm=[vertices.min(0).tolist(),vertices.max(0).tolist()])
     out.with_suffix('.report.json').write_text(json.dumps(report,indent=2))

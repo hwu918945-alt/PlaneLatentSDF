@@ -31,5 +31,6 @@
     "seam": 0.05,
     "eikonal": 0.1
   },
-  "decoder_initialization": "geometric_sphere"
+  "decoder_initialization": "geometric_sphere",
+  "historical_only": "Archived epi/sphere experiment; current shell train.py deliberately rejects this configuration. Use config.json."
 }

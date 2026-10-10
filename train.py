@@ -7,13 +7,13 @@ import time
 from pathlib import Path
 import numpy as np
 import torch
-from core.data import load_case, validate_split
+from core.data import load_case, validate_split, require_shell
+from core.sampling import encode_case, eikonal_queries, deterministic_generator, validate_training_config
 from core.model import PlaneField, make_teacher, ema_update, leave_one_out_latent
-from core.losses import DistanceWeightedDistillation
+from core.losses import RealPlaneDistillation
 from core.losses import coordinate_gradient
 from core.training import case_objective
 from core.evaluation import case_geometry, aggregate_geometry
-from core.initialization import initialize_decoder
 
 
 def validate(student, paths, device):
@@ -23,18 +23,20 @@ def validate(student, paths, device):
     with torch.no_grad():
         for path in paths:
             c = load_case(path, device)
-            z = student.encoder(c['q'], c['sdf2d'], c['phase'])
+            z = encode_case(student, c)
             zl = leave_one_out_latent(c['s'], z)
             direct, loo, sign_accuracy = [], [], []
-            for i, b in enumerate(c['boundary']):
+            for i in range(len(c['s'])):
+                b = torch.cat((c['boundary'][i], c['boundary_endo'][i]))
                 direct.append(student.decoder(b, z[i:i+1].expand(len(b), -1), c['phase']).abs().mean())
-                mask = c['sdf2d'][i].abs() > 0.02
+                mask = c['sdf2d'][i].abs() > 0.002
                 if bool(mask.any()):
                     sq = c['q'][i, mask]
                     sf = student.decoder(sq, z[i:i+1].expand(len(sq), -1), c['phase'])
                     sd = c['sdf2d'][i, mask]
                     # Balanced accuracy avoids majority exterior labels hiding collapse.
-                    groups = [(sf[sd < 0] < 0).float(), (sf[sd > 0] > 0).float()]
+                    sources = c['sampling_source'][i, mask]
+                    groups = [(sf[sources == tag]*sign > 0).float() for tag, sign in [(4, -1), (5, 1), (6, 1)]]
                     sign_accuracy.append(torch.stack([x.mean() for x in groups if len(x)]).mean())
                 if 0 < i < len(z) - 1:
                     loo.append(student.decoder(b, zl[i-1:i].expand(len(b), -1), c['phase']).abs().mean())
@@ -42,7 +44,7 @@ def validate(student, paths, device):
             obs = float(torch.stack(direct).mean()) * c['scale_mm']
             hold = float(torch.stack(loo).mean()) * c['scale_mm'] if loo else obs
             sg = float(torch.stack(sign_accuracy).mean()) if sign_accuracy else 0.
-            probes = 0.5*(c['boundary'][:-1, ::16] + c['boundary'][1:, ::16])
+            probes = eikonal_queries(c, 128, deterministic_generator(c, 77))
             with torch.enable_grad():
                 qr = probes.reshape(-1, 3).detach().requires_grad_(True)
                 values = student.field(qr, c['s'], z.detach(), c['axis'], c['phase'])
@@ -69,6 +71,7 @@ def main():
     cfg = json.loads(Path(args.config).read_text())
     if args.epochs is not None:
         cfg['epochs'] = args.epochs
+    validate_training_config(cfg)
     torch.set_num_threads(cfg.get('cpu_threads', 1))
     random.seed(cfg['seed']); np.random.seed(cfg['seed']); torch.manual_seed(cfg['seed'])
     if torch.cuda.is_available():
@@ -78,15 +81,12 @@ def main():
         raise ValueError('Need both train and val files')
     validate_split(paths)
     out = Path(args.output); out.mkdir(parents=True, exist_ok=True)
+    if (out/'last.pt').exists() and not args.resume:
+        raise ValueError('Output already has a checkpoint; use --resume or a new output directory')
     (out / 'effective_config.json').write_text(json.dumps(cfg, indent=2))
     student = PlaneField(**cfg['model']).to(args.device)
-    if cfg.get('decoder_initialization') not in [None,'geometric_sphere']:
-        raise ValueError('Unknown decoder initialization')
-    if cfg.get('decoder_initialization') == 'geometric_sphere':
-        initialization = initialize_decoder(student)
-        (out/'initialization.json').write_text(json.dumps(initialization,indent=2))
     teacher = make_teacher(student)
-    distill = DistanceWeightedDistillation(prototypes=cfg['model']['prototypes']).to(args.device)
+    distill = RealPlaneDistillation(prototypes=cfg['model']['prototypes']).to(args.device)
     optimizer = torch.optim.AdamW(student.parameters(), lr=cfg['lr'], weight_decay=cfg['weight_decay'])
     start_epoch, global_step, best = 0, 0, math.inf
     if args.resume:
@@ -102,6 +102,10 @@ def main():
         if torch.cuda.is_available() and saved.get('rng_cuda') is not None:
             torch.cuda.set_rng_state_all([x.cpu() for x in saved['rng_cuda']])
     train_cases = [load_case(x, 'cpu') for x in paths['train']]
+    for case in train_cases:
+        require_shell(case)
+    for path in paths['val'] + paths['test']:
+        require_shell(load_case(path))
     for epoch in range(start_epoch, cfg['epochs']):
         epoch_start = time.monotonic()
         student.train(); teacher.eval()

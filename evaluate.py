@@ -1,4 +1,4 @@
-"""Fixed split evaluation and honest mesh/coverage reporting for a single epi field."""
+"""Fixed split evaluation and honest mesh/coverage reporting for a myocardium shell field."""
 import argparse
 import csv
 import json
@@ -9,6 +9,7 @@ import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 from core.data import load_case
+from core.sampling import encode_case, eikonal_queries, deterministic_generator
 from core.model import PlaneField,leave_one_out_latent,interpolate_latent
 from core.losses import coordinate_gradient
 from core.evaluation import case_geometry,aggregate_geometry,slice_geometry
@@ -17,18 +18,24 @@ from extract_mesh import extract
 
 def diagnostics(model,c,out,foreign=None):
     with torch.no_grad():
-        z=model.encoder(c['q'],c['sdf2d'],c['phase']);zl=leave_one_out_latent(c['s'],z)
+        z=encode_case(model,c);zl=leave_one_out_latent(c['s'],z)
         prob=torch.softmax(model.head(z)/0.1,-1)
-    probes=0.5*(c['boundary'][:-1,::8]+c['boundary'][1:,::8])
+    probes=eikonal_queries(c,128,deterministic_generator(c,77))
     q=probes.reshape(-1,3).detach().requires_grad_(True)
     f=model.field(q,c['s'],z,c['axis'],c['phase'])
     norm=coordinate_gradient(f,q,False).norm(dim=-1).detach().cpu().numpy()
     sign_groups=[]
+    region_signs={name:[] for name in ('myocardium','cavity','background')}
     for i in range(len(z)):
         with torch.no_grad():
             pred=model.decoder(c['q'][i],z[i:i+1].expand(c['q'].shape[1],-1),c['phase'])
         d=c['sdf2d'][i];mask=d.abs()>0.002
-        groups=[(pred[mask&(d<0)]<0).float(),(pred[mask&(d>0)]>0).float()]
+        source=c['sampling_source'][i]
+        groups=[]
+        for tag,name,sign in [(4,'myocardium',-1),(5,'cavity',1),(6,'background',1)]:
+            values=(pred[(source==tag)&mask]*sign>0).float()
+            if len(values):
+                groups.append(values);region_signs[name].append(float(values.mean()))
         sign_groups.append(float(torch.stack([x.mean() for x in groups if len(x)]).mean()))
     chosen=sorted(set([0,len(z)//2,len(z)-1]))
     fig,axes=plt.subplots(2,len(chosen),figsize=(4*len(chosen),8),squeeze=False)
@@ -44,15 +51,19 @@ def diagnostics(model,c,out,foreign=None):
                 ax.contour(np.linspace(extent[0],extent[1],field.shape[0]),np.linspace(extent[2],extent[3],field.shape[1]),field.T,levels=[0],colors=['lime'])
             b=c['boundary'][i].cpu().numpy()@basis[:,:2]*100;b=np.r_[b,b[:1]]
             ax.plot(b[:,0],b[:,1],'k--',linewidth=1)
+            if 'boundary_endo' in c:
+                b=c['boundary_endo'][i].cpu().numpy()@basis[:,:2]*100;b=np.r_[b,b[:1]]
+                ax.plot(b[:,0],b[:,1],'k--',linewidth=1)
             ax.set_title(f'{"direct" if row==0 else "LOO" if 0<i<len(z)-1 else "endpoint (direct)"}, plane {i}')
             ax.set_aspect('equal')
     fig.suptitle(f'{c["case_id"]} {"ED" if c["phase"]==0 else "ES"}: black observation, green zero contour')
     fig.tight_layout();fig.savefig(out/'contours.png',dpi=150);plt.close(fig)
     result=dict(sign_balanced_accuracy=float(np.mean(sign_groups)),gap_gradient_norm_quantiles=np.quantile(norm,[0,.05,.5,.95,1]).tolist(),
                 latent_std=float(z.std(0,unbiased=False).mean()),student_entropy=float(-(prob*prob.clamp_min(1e-9).log()).sum(-1).mean()))
+    result['region_sign_accuracy']={name:float(np.mean(values)) if values else None for name,values in region_signs.items()}
     if foreign is not None:
         with torch.no_grad():
-            other=model.encoder(foreign['q'],foreign['sdf2d'],foreign['phase'])
+            other=encode_case(model,foreign)
             fraction=(c['s']-c['s'][0])/(c['s'][-1]-c['s'][0])
             positions=foreign['s'][0]+fraction*(foreign['s'][-1]-foreign['s'][0])
             queries=positions[:,None]*foreign['axis']
@@ -96,7 +107,7 @@ def main():
             diag['predicted_slab_volume_descriptor_ml']=None
         report=dict(case_id=c['case_id'],phase=c['phase'],split=args.split,geometry=geometry,diagnostics=diag)
         if args.meshes:
-            try:report['mesh']=extract(model,c,out/'epi.obj',args.resolution)
+            try:report['mesh']=extract(model,c,out/'myocardium_shell.obj',args.resolution)
             except ValueError as e:
                 report['mesh_failure']=str(e);failures.append(dict(case=name,error=str(e)))
         (out/'metrics.json').write_text(json.dumps(report,indent=2,allow_nan=False))
@@ -109,7 +120,7 @@ def main():
     summary=dict(split=args.split,patient_count=len(set(r['case_id'] for r in csv_rows)),phase_file_count=len(paths),
                  evaluation_query_spacing_mm=args.spacing_mm,mesh_resolution=args.resolution if args.meshes else None,
                  checkpoint=str(Path(args.checkpoint).resolve()),checkpoint_epoch=saved['epoch'],metrics=aggregate_geometry(all_rows),mesh_failures=failures,
-                 metric_contract='LV epi filled envelope, SAX-only; same 0.5mm raster Dice and symmetric point-sampled MCD/HD95 as v11_5static. Direct and real layer LOO separated. Phase then patient equal weight.',
+                 metric_contract='LV myocardium shell, SAX-only; myocardium Dice at reported query spacing, separately paired epi/endo MCD/HD95 and 0.5mm filled surface Dice. Extra/missing zero curves count as invalid topology/coverage. Direct and real-layer LOO separated. Phase then patient equal weight.',
                  distances_are_proxy=False,full_3d_gt_metrics_available=False,cardiac_function_reported=False,artificial_caps=False)
     (root/'numeric_eval_summary.json').write_text(json.dumps(summary,indent=2,allow_nan=False))
     # Marker means all phases assessed; failures remain explicit in the summary.

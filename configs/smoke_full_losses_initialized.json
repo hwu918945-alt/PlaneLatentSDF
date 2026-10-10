@@ -31,5 +31,6 @@
     "geometry": 0.002,
     "seam": 0.05,
     "eikonal": 0.1
-  }
+  },
+  "historical_only": "Archived epi/sphere experiment; current shell train.py deliberately rejects this configuration. Use config.json."
 }

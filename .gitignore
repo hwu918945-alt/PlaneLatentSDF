@@ -52,3 +52,8 @@ __pycache__/
 /.release-check/
 /data/plane_sdf_rebuilt/
 /provenance/release/local_*.json
+
+# New shell inputs are generated on the machine holding aligned epi+endo data.
+/data/plane_sdf_shell/
+/data/aligned_sax_shell_manifest*.json
+/data/aligned_sax_shell_manifest.*.json

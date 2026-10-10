@@ -27,15 +27,8 @@ def verify_files(manifest):
                 raise ValueError(f'Broken or changed relative symlink: {relative}')
         elif not path.is_file() or path.is_symlink() or digest(path) != expected['sha256']:
             raise ValueError(f'Missing or changed published file: {relative}')
-    historical = ROOT / 'provenance/code_sha256.txt'
-    for line in historical.read_text().splitlines():
-        sha, relative = line.split(maxsplit=1)
-        # This release replaces the README and excludes numeric deployment reports.
-        if relative in ['README.md', 'DEPLOYMENT_REPORT.md']:
-            continue
-        path = ROOT / relative
-        if digest(path) != sha:
-            raise ValueError(f'Changed original clinical run file: {relative}')
+    # provenance/code_sha256.txt records the historical epi run, not the
+    # intentionally revised main method. Current source hashes are in manifest.
     experiments = {}
     for name in ['stanford_bunny_slice_sweep_v2', 'balloon_dog_slice_sweep_v1']:
         folder = ROOT / 'experiments' / name
@@ -51,7 +44,7 @@ def verify_files(manifest):
             raise ValueError(f'Changed Bunny v1 runtime: {record["snapshot"]}')
     experiments['stanford_bunny_single_case_v1'] = len(snapshot)
     return {'published_files': len(manifest['files']), 'experiment_locks': experiments,
-            'historical_clinical_method_unchanged': True}
+            'current_method': 'SAX-only myocardium shell', 'historical_experiment_runtimes_unchanged': True}
 
 
 def verify_caches():

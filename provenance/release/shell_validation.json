@@ -1,0 +1,60 @@
+{
+  "method": "SAX-only myocardium shell",
+  "engineering_status": "PASS",
+  "clinical_quality_verified": false,
+  "full_shell_dataset_available_locally": false,
+  "cuda_tested": false,
+  "windows_d_drive_accessed": false,
+  "environment": {
+    "python": "3.12.14",
+    "torch": "2.14.1+cpu",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0",
+    "skimage": "0.26.0",
+    "shapely": "2.2.0"
+  },
+  "core": {
+    "status": "PASS",
+    "tests_run": 7,
+    "failures": 0,
+    "errors": 0,
+    "torch_version": "2.14.1+cpu",
+    "device": "cpu",
+    "clinical_training_performed": false
+  },
+  "resume": {
+    "status": "PASS",
+    "steps": 3,
+    "student_teacher_center_bitwise_equal": true,
+    "rng_state_equal": true,
+    "epoch_boundary_resume": true
+  },
+  "real_geometry": {
+    "status": "PASS",
+    "patients": {
+      "train": 0,
+      "val": 0,
+      "test": 1
+    },
+    "phase_files": {
+      "train": 0,
+      "val": 0,
+      "test": 2
+    },
+    "max_plane_residual_mm": 6.0863635553687345e-06,
+    "max_sdf_error_mm": 2.574920654296875e-05,
+    "source_counts": {
+      "epi_zero": 512,
+      "epi_gaussian": 1536,
+      "endo_zero": 512,
+      "endo_gaussian": 1536,
+      "myocardium": 2048,
+      "cavity": 1024,
+      "background": 1024
+    },
+    "subset_only": true
+  },
+  "test_patient_used_for_optimization": false,
+  "observed_loss_scaling_and_threshold_preserved": true,
+  "eikonal_efficiency_or_collapse_fix_verified": false
+}

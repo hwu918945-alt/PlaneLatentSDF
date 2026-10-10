@@ -7,9 +7,11 @@ import torch
 def polygon_sdf(points, polygon):
     """Exact segment distance + ray crossing sign for ONE simple filled polygon.
     Negative inside. Points exactly on a segment have zero distance.
-    TODO(AGENT): epi or cavity is a filled region; do NOT use a myocardium ring here.
+    Compose two separately validated polygons with max(d_epi, -d_endo) for shell.
     """
     p = np.asarray(points, dtype=np.float64)
+    if len(p) > 2048:
+        return np.concatenate([polygon_sdf(p[i:i+2048], polygon) for i in range(0, len(p), 2048)])
     a = np.asarray(polygon, dtype=np.float64)
     b = np.roll(a, -1, axis=0)
     v = b - a
@@ -48,6 +50,9 @@ def load_case(path, device='cpu'):
         if any(k not in f for k in required):
             raise ValueError(f'Missing keys in {path}: {required}')
         raw = {k: np.array(f[k]) for k in required}
+        for key in ['schema', 'anatomy', 'sampling_source', 'boundary_endo', 'source_slice_indices']:
+            if key in f:
+                raw[key] = np.array(f[key])
     q, d, b, s, axis = (raw[k] for k in ['q', 'sdf2d', 'boundary', 's', 'axis'])
     if q.ndim != 3 or q.shape[-1] != 3 or d.shape != q.shape[:2]:
         raise ValueError('q must be [N,P,3], sdf2d [N,P]')
@@ -69,7 +74,38 @@ def load_case(path, device='cpu'):
     result = {k: torch.as_tensor(raw[k], dtype=torch.float32, device=device) for k in ['q', 'sdf2d', 'boundary', 's', 'axis']}
     result.update(phase=int(raw['phase']), case_id=str(raw['case_id']),
                   center_mm=raw['center_mm'], scale_mm=float(raw['scale_mm']), path=str(path))
+    result['anatomy'] = str(raw.get('anatomy', 'legacy_filled_region'))
+    if 'schema' in raw:
+        from .sampling import SCHEMA, POOL_COUNTS
+        if str(raw['schema']) != SCHEMA:
+            raise ValueError('Unknown shell cache schema')
+        if result['anatomy'] != 'LV_myocardium_shell' or result['scale_mm'] != 100.:
+            raise ValueError('Invalid shell anatomy or physical scale')
+        source, endo = raw['sampling_source'], raw['boundary_endo']
+        if len(s) < 3 or source.shape != d.shape or q.shape[1] != sum(POOL_COUNTS) or endo.shape != b.shape or b.shape[1] != 512:
+            raise ValueError('Invalid shell pool/boundary shapes')
+        if not np.isfinite(endo).all() or np.max(np.abs(endo @ axis - s[:, None])) > 1e-4:
+            raise ValueError('Invalid endo geometry')
+        for i in range(len(s)):
+            if not np.array_equal(np.bincount(source[i], minlength=7), POOL_COUNTS):
+                raise ValueError('Shell source quotas mismatch')
+            zero = (source[i] == 0) | (source[i] == 2)
+            if np.any(d[i, zero] != 0):
+                raise ValueError('Boundary SDF must be exactly zero')
+            for tag, sign in [(4, -1), (5, 1), (6, 1)]:
+                if not np.all(sign * d[i, source[i] == tag] > 0):
+                    raise ValueError('Shell region sign mismatch')
+        result['schema'] = str(raw['schema'])
+        result['sampling_source'] = torch.as_tensor(source, dtype=torch.long, device=device)
+        result['boundary_endo'] = torch.as_tensor(endo, dtype=torch.float32, device=device)
+        result['source_slice_indices'] = raw['source_slice_indices']
     return result
+
+
+def require_shell(case):
+    from .sampling import SCHEMA
+    if case.get('schema') != SCHEMA:
+        raise ValueError('Legacy epi-only cache is not a shell input. Rebuild with adapt_static_cache.py and prepare_cache.py; see docs/SHELL_DEPLOYMENT.md')
 
 
 def select_view(case, points):
@@ -81,30 +117,12 @@ def select_view(case, points):
 
 
 def gap_queries(case, count, eps=0.003):
-    """Proposal from roughly interpolated contours, plus broad planar Gaussian.
-    No target sdf and no midpoint encoder. Only observed planes anchor intervals.
-    TODO(AGENT): optional proposal alignment may rotate the ordered starting index;
-    NEVER train against the proposal as a pseudo ground-truth contour.
-    """
-    s, b, axis = case['s'], case['boundary'], case['axis']
-    valid = torch.nonzero(s[1:] - s[:-1] > 4 * eps).flatten()
-    if not len(valid):
-        raise ValueError('No gap large enough for geometry finite differences')
-    k = valid[torch.randint(len(valid), (count,), device=s.device)]
-    clearance = 1.5 * eps / (s[k + 1] - s[k])
-    a = clearance + torch.rand(count, device=s.device) * (1 - 2 * clearance)
-    j = torch.randint(b.shape[1], (count,), device=s.device)
-    proposal = (1 - a[:, None]) * b[k, j] + a[:, None] * b[k + 1, j]
-    noise = torch.randn_like(proposal) * 0.06  # 6 mm at scale=100 mm.
-    noise -= (noise * axis).sum(-1, keepdim=True) * axis
-    q = proposal + noise
-    # Include broad uniform lateral samples in the box of observed contours.
-    uniform = b.amin((0, 1)) + torch.rand_like(q) * (b.amax((0, 1)) - b.amin((0, 1)))
-    pos = (1 - a) * s[k] + a * s[k + 1]
-    uniform += (pos - uniform @ axis)[:, None] * axis
-    mask = torch.rand(count, device=s.device) < 0.25
-    q[mask] = uniform[mask]
-    return q, k, a
+    """Compatibility wrapper for shell queries, without pseudo targets."""
+    from .sampling import eikonal_queries
+    q = eikonal_queries(case, count)
+    s = case['s']; pos = q @ case['axis']
+    k = (torch.searchsorted(s, pos.contiguous(), right=True)-1).clamp(0, len(s)-2)
+    return q, k, (pos-s[k])/(s[k+1]-s[k])
 
 
 def validate_split(paths):

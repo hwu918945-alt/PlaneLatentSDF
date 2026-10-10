@@ -21,7 +21,10 @@ def observed_loss(decoder, q, d2, boundary, z, axis, phase, tau=0.02, diagnostic
     factor = tangent.norm(dim=-1).detach()  # A fixed scale for this step, not another head.
     near = (d2.abs() > 1e-5) & (d2.abs() < tau) & (factor > 0.15)
     if diagnostics is not None:
-        diagnostics.append(float(near.float().mean().detach()))
+        diagnostics.append({'calibration_valid_fraction': float(near.float().mean().detach()),
+                            'factor_pass_fraction': float((factor > 0.15).float().mean()),
+                            'near_field_fraction': float(((d2.abs() > 1e-5) & (d2.abs() < tau)).float().mean()),
+                            'observed_field_abs_mean': float(pred.detach().abs().mean())})
     residual = (pred - factor * d2) / tau
     distance = F.smooth_l1_loss(residual[near], torch.zeros_like(residual[near]), beta=0.2) if bool(near.any()) else pred.sum() * 0
     signmask = d2.abs() > 0.002
@@ -29,15 +32,25 @@ def observed_loss(decoder, q, d2, boundary, z, axis, phase, tau=0.02, diagnostic
     # Margin <= plane distance; do not make near-boundary sign labels impossible.
     margin = d2.abs().clamp(max=0.005)
     sign = (F.relu(margin[signmask] - signed[signmask]) / tau).mean() if bool(signmask.any()) else pred.sum() * 0
-    surf = decoder(boundary, z[:1].expand(len(boundary), -1), phase).abs().mean() / tau
+    if boundary.ndim == 3:
+        # Epi and endo each contribute one mean, independently of query count.
+        surf = torch.stack([decoder(b, z[:1].expand(len(b), -1), phase).abs().mean()
+                            for b in boundary]).mean() / tau
+    else:
+        surf = decoder(boundary, z[:1].expand(len(boundary), -1), phase).abs().mean() / tau
     return surf + 0.2 * sign + 0.2 * distance
 
 
-def eikonal_loss(field_fn, q):
+def eikonal_loss(field_fn, q, diagnostics=None):
     qr = q.detach().clone().requires_grad_(True)
-    g = coordinate_gradient(field_fn(qr), qr)
+    value = field_fn(qr)
+    g = coordinate_gradient(value, qr)
     # TODO(AGENT): field_fn must interpolate z using THIS qr, not precomputed z_m.
-    return ((g.norm(dim=-1) - 1) ** 2).mean()
+    norm = g.norm(dim=-1)
+    if diagnostics is not None:
+        diagnostics.update(gradient_norm_median=float(norm.detach().median()),
+                           field_abs_mean=float(value.detach().abs().mean()))
+    return ((norm - 1) ** 2).mean()
 
 
 def normal_at(field_fn, q):
@@ -47,22 +60,6 @@ def normal_at(field_fn, q):
     return F.normalize(g, dim=-1, eps=1e-6), value
 
 
-def gap_geometry_loss(field_fn, q, axis, eps=0.003, band=0.03):
-    """Weak second-order surface normal variation in the axial tangent direction.
-    t=(I-NN^T)axis; avoid dividing by ||t|| at caps. No contour correspondence.
-    q must have >=eps clearance to both slab endpoints (sampler enforces it).
-    """
-    normal, value = normal_at(field_fn, q)
-    tangent = (axis - (normal * axis).sum(-1, keepdim=True) * normal).detach()
-    plus, _ = normal_at(field_fn, q + eps * tangent)
-    minus, _ = normal_at(field_fn, q - eps * tangent)
-    change = (plus - minus) / (2 * eps)
-    weight = torch.exp(-(value.detach() / band) ** 2)
-    # Each component uses Huber; large curvature is discouraged, not prohibited.
-    robust = F.smooth_l1_loss(change, torch.zeros_like(change), beta=1, reduction='none').mean(-1)
-    return (weight * robust).mean()
-
-
 def seam_normal_loss(field_fn, boundary, axis, eps):
     left, _ = normal_at(field_fn, boundary - eps * axis)
     right, _ = normal_at(field_fn, boundary + eps * axis)
@@ -70,8 +67,8 @@ def seam_normal_loss(field_fn, boundary, axis, eps):
     return (1 - (left * right).sum(-1).clamp(-1, 1)).mean()
 
 
-class DistanceWeightedDistillation(nn.Module):
-    """DINO-style centering/sharpening/EMA CE, with custom geometric pairing.
+class RealPlaneDistillation(nn.Module):
+    """DINO-style centering/sharpening/EMA CE, with real hidden-plane pairing.
     This is a research adaptation, NOT the complete standard DINO algorithm.
     """
     def __init__(self, prototypes=256, student_temp=0.1, teacher_temp=0.07, center_momentum=0.9):

@@ -1,20 +1,17 @@
 {
-  "seed": 20261009,
+  "seed": 20261010,
   "epochs": 2,
   "batch_cases": 4,
   "cpu_threads": 1,
   "geometry_validation_interval": 1,
   "validation_spacing_mm": 1.0,
+  "decoder_initialization": "random",
   "lr": 0.0002,
   "weight_decay": 1e-05,
   "clip_grad": 5.0,
-  "encoder_points": 512,
-  "supervision_points": 256,
-  "boundary_points": 128,
-  "regularization_points": 128,
+  "encoder_points": 2048,
+  "supervision_points": 640,
   "tau": 0.02,
-  "geometry_eps": 0.003,
-  "geometry_band": 0.03,
   "warmup_epochs": 0,
   "ramp_epochs": 1,
   "ema_start": 0.996,
@@ -27,8 +24,16 @@
     "self": 0.5,
     "loo": 1.0,
     "distill": 0.05,
-    "geometry": 0.002,
     "seam": 0.05,
     "eikonal": 0.1
+  },
+  "anatomy": "LV_myocardium_shell",
+  "zero_points_per_surface": 64,
+  "seam_points_per_surface": 16,
+  "seam_epsilon_mm": 0.1,
+  "eikonal_points": 128,
+  "experimental_defaults": {
+    "eikonal_points": "128 per case per optimizer step; initial budget, not user-fixed or optimal",
+    "eikonal_weight": "0.1 retained as initial configuration; efficacy remains to be tested"
   }
 }
