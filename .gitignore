@@ -53,7 +53,7 @@ __pycache__/
 /data/plane_sdf_rebuilt/
 /provenance/release/local_*.json
 
-# New shell inputs are generated on the machine holding aligned epi+endo data.
-/data/plane_sdf_shell/
-/data/aligned_sax_shell_manifest*.json
+# Prepared shell inputs are published; transient adapters/import bundles stay local.
 /data/aligned_sax_shell_manifest.*.json
+/PlaneLatentSDF_shell_*.zip
+/data/plane_sdf_shell/**/.prepare-*/

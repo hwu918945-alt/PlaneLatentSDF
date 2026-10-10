@@ -1,0 +1,25 @@
+{
+  "imported_commit": "24c0be0df78b98879fe1b6b35a6f22745e88ba45",
+  "parent_commit": "14ec357b0ee9bcc955ecb0325c9b4c2a0b6456a6",
+  "source_zip": "PlaneLatentSDF_shell_24c0be0.zip",
+  "source_zip_sha256": "16d2389af879afb69a2b5fc4df0cb293faaffca8fc26c03835249d1fcc578969",
+  "method_files_unchanged": {
+    "adapt_static_cache.py": "240c0c0941b94ce90ff0323ebe8116f7c0c85d97ed413b07a5cd181d96c7d39e",
+    "prepare_cache.py": "6c5baef21f70437e0b30080a3c767909ff28ae862f5382d99421f07ed069e21b",
+    "train.py": "7535c099b4aedf75e3ef4ac6b4e64507ee74ae2525ed231e19d450d2ee3e2d22",
+    "evaluate.py": "3afcca593359fcb0cc8a5695735d38be41b71767dd992d8bcec50184f13f02b6",
+    "extract_mesh.py": "4290048f95bf4394fefccd3c56254c89a88ab5c471dceadf3aca5fd68d033be2",
+    "config.json": "dfdf5c2e88adac4b14098eaf44323a745130023f3c678b89f8e73451dd7a4557",
+    "core/__init__.py": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+    "core/data.py": "f851825c4f9abdc9ae697dbef7c6e002a65e4ce0b36111019a245e1202c71db8",
+    "core/evaluation.py": "c28b48ec9d333614756ca7552fee0b2735c848a30061b9243d1734182d497b62",
+    "core/geometry.py": "b87ef91170bad50a08a173eb59292533ff683796a25fc6e5efd769bb55156056",
+    "core/initialization.py": "32759b5faab21164f33005586c5270c4e5b085fe745c87ea4546952007e07003",
+    "core/losses.py": "d85f662c53b6d68ace7978d1d7addba625a1c720705d70d287dd2d918cca4bab",
+    "core/mesh.py": "d848731bd608ee4cf65b330d5683567638f1a3750d132fc3c4332342f68f6cf9",
+    "core/model.py": "67124c64d4f7f98d5e6d5a880128e4b523149ddfdccfa9ce03e1988de920a59f",
+    "core/sampling.py": "5ecaa286474059559674ce00b333a6c0f0cfa0a7cf69c5e5d373a870919cc258",
+    "core/training.py": "1e31f2e3e44ed107732098986d479bc6bfb52f2d24291af53331def573bb16a6"
+  },
+  "changes_scope": "deployment interfaces, isolated run configuration, prepared shell data and reproducibility metadata"
+}

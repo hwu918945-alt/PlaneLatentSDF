@@ -49,7 +49,20 @@ def verify_files(manifest):
 
 def verify_caches():
     import numpy as np
-    from core.data import load_case, validate_split
+    from core.data import load_case, validate_split, require_shell
+    from scripts.check_shell_ready import check
+
+    shell = ROOT / 'data/plane_sdf_shell'
+    shell_report = check(shell, ROOT / 'data/aligned_sax_shell_manifest.json')
+    shell_paths = {split: sorted((shell / split).glob('*.npz')) for split in ['train', 'val', 'test']}
+    validate_split(shell_paths)
+    for split, paths_in_split in shell_paths.items():
+        for path in paths_in_split:
+            case = load_case(path)
+            require_shell(case)
+            phase = 'ED' if case['phase'] == 0 else 'ES'
+            if path.stem != f'{case["case_id"]}_{phase}':
+                raise ValueError(f'Shell filename/metadata mismatch: {path}')
 
     folder = ROOT / 'data/plane_sdf'
     paths = {split: sorted((folder / split).glob('*.npz')) for split in ['train', 'val', 'test']}
@@ -90,7 +103,7 @@ def verify_caches():
         synthetic.append({'file': str(path.relative_to(ROOT)), 'planes': len(case['s'])})
     if len(synthetic) != 9:
         raise ValueError(f'Expected Bunny v1 plus eight sweep caches; found {len(synthetic)}')
-    return {'clinical': report, 'synthetic': synthetic}
+    return {'myocardium_shell': shell_report, 'legacy_epi': report, 'synthetic': synthetic}
 
 
 def main():

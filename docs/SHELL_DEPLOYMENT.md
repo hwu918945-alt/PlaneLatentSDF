@@ -14,16 +14,18 @@ python scripts/verify_release.py --hashes-only
 python verify_core.py --output preflight/shell_core.json
 ```
 
-本次实现运行环境是云端 Linux CPU，并非用户 Windows 主机，没有访问 Windows D 盘，也未验证用户本机 DL 环境。Windows 下载位置可在 PowerShell 使用：
+恢复包的原工程验证是 Linux CPU；本次远端部署使用 `provenance/release/environment.json` 记录的环境，并在真实 A40 上执行独立 CUDA 门禁。完成信息保存在本机 `preflight/shell_deployment/cuda_gate/CUDA_GATE_COMPLETE.json`，不将工程通过等同于心脏重建质量。Windows 下载位置可在 PowerShell 使用：
 
 ```powershell
 Set-Location D:\
 git clone https://github.com/hwu918945-alt/PlaneLatentSDF.git
 ```
 
-## 2. 必须重新准备双轮廓数据
+## 2. 已准备好的双轮廓数据与可选重建
 
 GitHub 的原 `data/plane_sdf` 和 `data/aligned_sax_manifest.json` 只有 Epi，不能恢复缺失 Endo。本版通过新版 adapter 读取原始 `data/cache/<id>/endpoint_case.npz` 的真实双轮廓；不读图像、LAX 或 `training_myo_views`。
+
+本次发布另包含 `data/aligned_sax_shell_manifest.json`、审计元数据与完整 `data/plane_sdf_shell`，新克隆无需再执行转换。先运行 `python scripts/check_shell_ready.py`。以下命令只用于拥有原 static 缓存、需要重新生成输入的机器。
 
 ```bash
 bash scripts/prepare_shell.sh /gpfs/work/aac/haoyuwu24/Heart_Reconstruction/LV_Epi_CrossSDF_MeshPrior_MnM2_v11_5static
@@ -52,7 +54,17 @@ adapter 校验 `endpoint epi+endo` 元数据与每层连续多边形严格嵌套
 
 预处理固定尺度 100 mm，中心取首层有效平面原点，不依赖隐藏层形状均值。共轴近似造成的轮廓投影超过 0.01 mm 时，默认失败；只有明确接受近似时才在独立 `prepare_cache.py` 命令中添加 `--project-parallel`。投影后重新计算真实平面 SDF，报告最大投影误差。
 
-`--resume` 只复用输入摘要、种子、projection 设置匹配的完整 NPZ；病例随机种子独立，不受中断或处理顺序影响。重建数据和长训练输出已被 gitignore 排除，不向 GitHub 自动上传原始病例。
+`--resume` 只复用输入摘要、种子、projection 设置匹配的完整 NPZ；病例随机种子独立，不受中断或处理顺序影响。发布仅包含准备好的模型输入；原 source 缓存、图像和训练输出不上传。
+
+部署新增 `scripts/prepare_shell_cache_parallel.py`，直接调用恢复包的 `convert()` 和同一病例随机种子；002 ED/ES 与串行原入口逐字节一致。`scripts/verify_shell_cache_parallel.py` 按患者拆分原连续多边形审计，汇总时强制完整 285/36/36 划分和 714 时相覆盖。原方法与采样实现没有改动。
+
+```bash
+# 已有双轮廓 manifest，按分配到的 CPU 数并行生成/审计：
+python scripts/prepare_shell_cache_parallel.py --workers 4 --resume
+python scripts/verify_shell_cache_parallel.py --workers 4
+# 或在本集群提交 CPU-only 任务：
+sbatch sbatch/prepare_shell_cache.sh
+```
 
 ## 3. 训练和 Slurm
 
@@ -78,7 +90,9 @@ sbatch sbatch/train_main.sh
 sbatch --partition=YOUR_PARTITION sbatch/train_portable.sh
 ```
 
-Slurm 入口执行代码哈希、数据审计、核心测试、真实 Train 数据的 CUDA smoke，然后训练及 Val/Test 评价。未在本次云端 CPU 环境运行 Slurm 或 CUDA；这些检查将在你的远端真实环境执行。
+Slurm 入口检查发布哈希与已审计缓存的完整输入清单，再在真实 Train 数据上执行 CUDA 全损失 smoke，随后训练与评价。耗时的连续轮廓审计在准备阶段一次性完成，并用 `DATASET_READY.json` 锁定输入；不重复占用 GPU 做同一 CPU 审计。首次部署的核心测试与独立 CUDA 训练/续训/评价门禁单独保留。
+
+002 单患者使用 `sbatch/train_single_shell.sh`，配置 `configs/shell_single_002.json`（400 epochs、batch_cases=2），输出 `runs/shell_single_002` / `outputs/shell_single_002`。多患者入口保持 `sbatch/train_main.sh`、`config.json` 与 200 epochs。旧单患者 `preflight/single_patient` 和旧权重不复用。
 
 ## 4. 指标与诊断
 

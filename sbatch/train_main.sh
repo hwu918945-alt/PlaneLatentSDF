@@ -11,5 +11,6 @@
 set -euo pipefail
 TASK_REPO="${REPO_ROOT:-${SLURM_SUBMIT_DIR:-$(pwd)}}"
 export PYTHON_BIN="${PYTHON_BIN:-/gpfs/work/aac/haoyuwu24/.conda/envs/haoyu/bin/python}"
+export SHELL_MODE=main
 cd "$TASK_REPO"
 bash sbatch/train_portable.sh

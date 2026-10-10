@@ -7,7 +7,8 @@
     "scikit-image": "0.25.2",
     "matplotlib": "3.10.8",
     "trimesh": "4.11.5",
-    "rtree": "1.4.1"
+    "rtree": "1.4.1",
+    "shapely": "2.1.2"
   },
-  "purpose": "Validated release environment; select a target-specific PyTorch CPU/CUDA build."
+  "purpose": "Actual shell deployment environment; target-specific CUDA wheel installed separately."
 }
