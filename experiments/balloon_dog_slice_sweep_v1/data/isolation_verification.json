@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "all_method_files_identical_to_clinical_main": true,
+  "all_four_label_and_gradient_checks_passed": true,
+  "identical_heldout_across_groups": true,
+  "reference_repair_applied": false,
+  "clinical_main_and_bunny_files_changed": false
+}

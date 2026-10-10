@@ -1,0 +1,10 @@
+# Preserve prepared arrays and source geometry byte-for-byte.
+*.npz binary
+*.npy binary
+*.ply binary
+*.stl binary
+*.obj binary
+*.tar.gz binary
+*.zip binary
+*.png binary
+data/aligned_sax_manifest.json -diff

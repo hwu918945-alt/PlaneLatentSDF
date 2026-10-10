@@ -1,0 +1,16 @@
+{
+  "status": "PASS",
+  "open_prediction_not_artificially_closed": true,
+  "evenodd_raster_hole": true,
+  "all_method_snapshots_match_main": true,
+  "config_differences_from_main": {
+    "epochs": {
+      "main": 200,
+      "bunny": 2000
+    },
+    "batch_cases": {
+      "main": 4,
+      "bunny": 1
+    }
+  }
+}

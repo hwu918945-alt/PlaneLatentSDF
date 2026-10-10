@@ -1,0 +1,104 @@
+{
+  "dataset": "Stanford Bunny",
+  "source_url": "https://graphics.stanford.edu/pub/3Dscanrep/bunny.tar.gz",
+  "attribution": "Stanford University Computer Graphics Laboratory",
+  "archive_sha256": "a5720bd96d158df403d153381b8411a727a1d73cff2f33dc9b212d6f75455b84",
+  "unit_convention": "1 source coordinate unit = 1000 benchmark mm; source units not independently verified",
+  "rotation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      -1.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ]
+  ],
+  "original_vertices": 34834,
+  "original_faces": 69451,
+  "original_watertight": false,
+  "reference_vertices": 34834,
+  "reference_faces": 69664,
+  "reference_watertight": true,
+  "explicitly_repaired_holes": [
+    {
+      "boundary_vertices": 22,
+      "pca_plane_max_residual_mm": 0.387757690881255,
+      "projected_area_mm2": 46.92466606830017
+    },
+    {
+      "boundary_vertices": 42,
+      "pca_plane_max_residual_mm": 1.2272973898472284,
+      "projected_area_mm2": 171.2582448606523
+    },
+    {
+      "boundary_vertices": 39,
+      "pca_plane_max_residual_mm": 1.2879548829701155,
+      "projected_area_mm2": 237.9606980064713
+    },
+    {
+      "boundary_vertices": 40,
+      "pca_plane_max_residual_mm": 0.8992872661422114,
+      "projected_area_mm2": 280.65188531520096
+    },
+    {
+      "boundary_vertices": 80,
+      "pca_plane_max_residual_mm": 4.031781188958023,
+      "projected_area_mm2": 274.16978757030785
+    }
+  ],
+  "repair": "PCA-plane ear clipping, original boundary vertices preserved; reference geometry assumption",
+  "reference_bounds_mm": [
+    [
+      -94.68989819288254,
+      -58.79969894886017,
+      32.98740088939667
+    ],
+    [
+      61.00910156965256,
+      61.873599886894226,
+      187.3210072517395
+    ]
+  ],
+  "observed_planes": 16,
+  "heldout_planes": 45,
+  "observed_ring_counts": [
+    5,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    3,
+    2,
+    2,
+    1
+  ],
+  "multi_ring_labels": "minimum true segment distance; even/odd sign across all loops, no invented connecting edges",
+  "scale_mm": 100.0,
+  "center_from_observed_contours_mm": [
+    -32.38622006793776,
+    -3.3951897931212898,
+    110.15420407056547
+  ],
+  "observed_extent_mm": [
+    33.73740088939667,
+    186.5710072517395
+  ],
+  "discarded_tip_extent_mm": 0.75,
+  "full_mesh_used_for_training_loss": false,
+  "heldout_used_for_training_or_selection": false
+}

@@ -1,0 +1,29 @@
+{
+  "slice_counts": [
+    16,
+    25,
+    50,
+    75
+  ],
+  "milestones": [
+    2000,
+    4000,
+    6000
+  ],
+  "training_seed": 20261009,
+  "heldout_seed": 20261010,
+  "common_heldout_planes": 121,
+  "checkpoint_selection": "all prespecified milestones; no test-based selection",
+  "architecture_and_loss": "byte-identical main runtime snapshot",
+  "same_case_from_scratch": true,
+  "ema_cosine_horizon": 6000,
+  "previous_2000_step_run": "preserved; EMA horizon=2000 so not the same trajectory",
+  "slice_count_reference": {
+    "url": "https://arxiv.org/html/2412.04120v2",
+    "evidence": "Table 2 uses 25 for thick structures; Table 4 compares 25,50,75 for thin structures",
+    "caveat": "reference densities adopted for Bunny experiment, not a universal Bunny standard"
+  },
+  "normalization_scale_mm": 100,
+  "unit_convention": "1 source coordinate unit = 1000 benchmark mm; not independently verified physical units",
+  "clinical_main_changed": false
+}

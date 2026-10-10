@@ -1,0 +1,17 @@
+{
+  "lower_mm": [
+    -109.6745838533729,
+    -73.76732454286119,
+    33.73740005493164
+  ],
+  "upper_mm": [
+    76.00262956543956,
+    76.84295454039076,
+    186.57101440429688
+  ],
+  "definition": "union of observed boundary boxes across prespecified groups; no full-reference bbox",
+  "common_heldout_count": 121,
+  "minimum_distance_to_any_observed_mm": 0.030093514923137832,
+  "full_reference_mesh_used_for_loss": false,
+  "heldout_used_for_training_or_selection": false
+}

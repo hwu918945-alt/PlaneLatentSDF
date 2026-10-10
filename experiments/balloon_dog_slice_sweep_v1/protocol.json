@@ -1,0 +1,32 @@
+{
+  "slice_counts": [
+    16,
+    25,
+    50,
+    75
+  ],
+  "milestones": [
+    2000,
+    4000,
+    6000
+  ],
+  "training_seed": 20261009,
+  "heldout_seed": 20261010,
+  "common_heldout_planes": 121,
+  "checkpoint_selection": "all prespecified milestones; no test-based selection",
+  "architecture_and_loss": "byte-identical main runtime snapshot",
+  "same_case_from_scratch": true,
+  "ema_cosine_horizon": 6000,
+  "slice_count_reference": {
+    "url": "https://arxiv.org/html/2412.04120v2",
+    "evidence": "Table 2 uses 25 for thick structures; Table 4 compares 25,50,75 for thin structures",
+    "caveat": "25 is directly used for Balloon Dog in CrossSDF Table 2; 16/50/75 are our density controls"
+  },
+  "normalization_scale_mm": 100,
+  "unit_convention": "1 dimensionless source coordinate unit = 100 benchmark mm; no per-model bbox rescaling; not verified physical millimetres",
+  "clinical_main_changed": false,
+  "case_id": "balloon_dog",
+  "dataset_source": "https://github.com/haimsaw/OReX",
+  "prepared_mesh_repaired": false,
+  "reference_rotation": "identity; original Z upright visually verified"
+}

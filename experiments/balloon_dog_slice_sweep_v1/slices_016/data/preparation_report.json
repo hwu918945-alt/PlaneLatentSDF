@@ -1,0 +1,34 @@
+{
+  "case_id": "balloon_dog",
+  "observed_planes": 16,
+  "spacing_mm": 10.084929402669271,
+  "extent_mm": [
+    -61.114845275878906,
+    90.15909576416016
+  ],
+  "scale_mm": 100,
+  "center_mm": [
+    3.9157932683303898,
+    0.07629851118005604,
+    14.522125244140566
+  ],
+  "boundary_ring_counts": [
+    3,
+    2,
+    2,
+    2,
+    2,
+    2,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    1,
+    1,
+    1,
+    2
+  ],
+  "reference_mesh_used_for_loss": false
+}

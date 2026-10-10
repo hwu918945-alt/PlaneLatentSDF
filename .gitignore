@@ -1,0 +1,54 @@
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.venv/
+.env
+.env.*
+!.env.example
+*.pt
+*.pth
+*.ckpt
+*.job.lock
+*.out
+*.err
+*.log
+
+# This publication contains code and prepared inputs only.
+/runs/
+/outputs/
+/logs/
+/preflight/
+/reports/
+/results/
+/DEPLOYMENT_REPORT.md
+/verification*.json
+/smoke_validation.json
+/experiments/**/runs/
+/experiments/**/outputs/
+/experiments/**/logs/
+/experiments/**/results/
+/experiments/**/GROUP_COMPLETE.json
+/experiments/**/PIPELINE_FAILED.json
+/experiments/*/BENCHMARK_COMPLETE.json
+/experiments/*/PIPELINE_RUN_COMPLETE.json
+/experiments/*/submission.json
+/experiments/*/provenance.json
+
+# Keep input/code attribution and preparation provenance, not numeric run reports.
+/provenance/*
+!/provenance/code_sha256.txt
+!/provenance/source_files.json
+!/provenance/static_endpoint_manifest.json
+!/provenance/alignment_adapter_audit.json
+!/provenance/preparation_report.json
+!/provenance/scaffold_diff.patch
+!/provenance/data.py
+!/provenance/evaluation.py
+!/provenance/release/
+
+# Preprocessed input data and reference geometry ARE versioned.
+# Temporary release checks and regenerated caches are not.
+/.release-check/
+/data/plane_sdf_rebuilt/
+/provenance/release/local_*.json

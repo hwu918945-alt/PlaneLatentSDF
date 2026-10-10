@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "multi_ring_evenodd_sign_and_segment_distance": true,
+  "max_boundary_distance_mm": 6.303460850176634e-06,
+  "full_loss_backward_gradients": {
+    "encoder": 1.2549571795098018,
+    "decoder": 56914.912773132324,
+    "head": 7.633920967578888
+  },
+  "teacher_frozen": true,
+  "eikonal_independent_encoder_gradient": true,
+  "losses": {
+    "self": 25.518503189086914,
+    "loo": 23.79945945739746,
+    "distill": 4.336566925048828,
+    "geometry": 0.015077482908964157,
+    "seam": 0.00013079251220915467,
+    "eikonal": 0.07303734868764877,
+    "total": 36.78288269042969,
+    "teacher_entropy": 4.244934558868408,
+    "latent_std": 0.0008181874873116612,
+    "ramp": 1.0,
+    "calibration_valid_fraction": 0.5077311197916666
+  }
+}

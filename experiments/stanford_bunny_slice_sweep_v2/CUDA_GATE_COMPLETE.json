@@ -1,0 +1,8 @@
+{
+  "status": "PASS",
+  "observed_planes": 75,
+  "full_loss_ramp_verified": true,
+  "resume_bitwise_equivalent_to_uninterrupted_student_teacher_center_optimizer_rng": true,
+  "shared_holdout_and_mesh_evaluation": true,
+  "scientific_reconstruction_success_claimed": false
+}

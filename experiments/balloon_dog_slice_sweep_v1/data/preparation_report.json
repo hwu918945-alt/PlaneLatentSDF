@@ -1,0 +1,313 @@
+{
+  "dataset": "OReX Balloon Dog",
+  "original_stl_sha256": "43d4beaed54d35890c12380cbfddb73c0f6879995e5d32aebc453be45953f380",
+  "vertices": 10001,
+  "faces": 19998,
+  "watertight": true,
+  "winding_consistent": true,
+  "original_source_bounds": [
+    [
+      -0.783170223236084,
+      -0.31942251324653625,
+      -0.6186484694480896
+    ],
+    [
+      0.8643405437469482,
+      0.31255418062210083,
+      0.9090909361839294
+    ]
+  ],
+  "reference_bounds_mm": [
+    [
+      -78.31702423095703,
+      -31.942251205444336,
+      -61.864845275878906
+    ],
+    [
+      86.43405151367188,
+      31.25541877746582,
+      90.90909576416016
+    ]
+  ],
+  "coordinate_conversion": "1 dimensionless source coordinate unit = 100 benchmark mm; no per-model bbox rescaling; not verified physical millimetres",
+  "rotation": [
+    [
+      1.0,
+      0.0,
+      0.0
+    ],
+    [
+      0.0,
+      1.0,
+      0.0
+    ],
+    [
+      0.0,
+      0.0,
+      1.0
+    ]
+  ],
+  "reference_mesh_repaired": false,
+  "reference_connected_components": 1,
+  "discarded_tip_extent_mm": 0.75,
+  "groups": [
+    {
+      "case_id": "balloon_dog",
+      "observed_planes": 16,
+      "spacing_mm": 10.084929402669271,
+      "extent_mm": [
+        -61.114845275878906,
+        90.15909576416016
+      ],
+      "scale_mm": 100,
+      "center_mm": [
+        3.9157932683303898,
+        0.07629851118005604,
+        14.522125244140566
+      ],
+      "boundary_ring_counts": [
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        2,
+        2,
+        2,
+        3,
+        1,
+        1,
+        1,
+        2
+      ],
+      "reference_mesh_used_for_loss": false
+    },
+    {
+      "case_id": "balloon_dog",
+      "observed_planes": 25,
+      "spacing_mm": 6.303080876668294,
+      "extent_mm": [
+        -61.114845275878906,
+        90.15909576416016
+      ],
+      "scale_mm": 100,
+      "center_mm": [
+        3.9984887355066894,
+        0.06752797802382701,
+        14.522125244140689
+      ],
+      "boundary_ring_counts": [
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        3,
+        2,
+        3,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "reference_mesh_used_for_loss": false
+    },
+    {
+      "case_id": "balloon_dog",
+      "observed_planes": 50,
+      "spacing_mm": 3.0872232865314095,
+      "extent_mm": [
+        -61.114845275878906,
+        90.15909576416016
+      ],
+      "scale_mm": 100,
+      "center_mm": [
+        3.277430132411246,
+        0.06265975824158886,
+        14.522125244140826
+      ],
+      "boundary_ring_counts": [
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "reference_mesh_used_for_loss": false
+    },
+    {
+      "case_id": "balloon_dog",
+      "observed_planes": 75,
+      "spacing_mm": 2.044242446487014,
+      "extent_mm": [
+        -61.114845275878906,
+        90.15909576416016
+      ],
+      "scale_mm": 100,
+      "center_mm": [
+        3.3035255304320406,
+        0.0594059424180629,
+        14.522125244142002
+      ],
+      "boundary_ring_counts": [
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        3,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        2,
+        2,
+        2,
+        2,
+        2,
+        2,
+        3,
+        2,
+        2,
+        2,
+        4,
+        3,
+        2,
+        2,
+        2,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
+        2
+      ],
+      "reference_mesh_used_for_loss": false
+    }
+  ],
+  "evaluation_domain": {
+    "lower_mm": [
+      -93.2846908569336,
+      -46.93622970581055,
+      -61.114845275878906
+    ],
+    "upper_mm": [
+      101.3939208984375,
+      46.24755096435547,
+      90.15909576416016
+    ],
+    "definition": "union of all prespecified observed boundary boxes plus 15 benchmark mm",
+    "common_heldout_count": 121,
+    "minimum_distance_to_any_observed_mm": 0.03298026092301143,
+    "full_reference_mesh_used_for_loss": false,
+    "heldout_used_for_training_or_selection": false
+  },
+  "multi_ring_labels": "nearest true segment distance; even/odd sign over all rings; no connecting edges",
+  "reference_mesh_used_for_loss": false,
+  "heldout_used_for_training_or_selection": false
+}

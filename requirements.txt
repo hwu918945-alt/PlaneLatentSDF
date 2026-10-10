@@ -1,0 +1,9 @@
+# Install PyTorch for the target machine using its official CPU/CUDA wheel selector.
+# CPU verification used torch==2.5.1+cpu. These are minimum interfaces, not a lockfile.
+torch>=2.5
+numpy>=1.26
+scipy>=1.11
+scikit-image>=0.24
+matplotlib>=3.8
+trimesh>=4.4
+rtree>=1.3

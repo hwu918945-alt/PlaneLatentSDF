@@ -1,0 +1,29 @@
+{
+  "repository": "https://github.com/haimsaw/OReX",
+  "commit": "089db1f757022606399d5f070d65bd172fe69362",
+  "files": [
+    {
+      "repository_path": "Data/csl_with_ref/reference/balloondog_scaled.stl",
+      "url": "https://raw.githubusercontent.com/haimsaw/OReX/089db1f757022606399d5f070d65bd172fe69362/Data/csl_with_ref/reference/balloondog_scaled.stl",
+      "local_path": "source/balloondog_scaled.stl",
+      "sha256": "43d4beaed54d35890c12380cbfddb73c0f6879995e5d32aebc453be45953f380",
+      "bytes": 999984
+    },
+    {
+      "repository_path": "Data/csl_with_ref/balloondog.csl",
+      "url": "https://raw.githubusercontent.com/haimsaw/OReX/089db1f757022606399d5f070d65bd172fe69362/Data/csl_with_ref/balloondog.csl",
+      "local_path": "source/balloondog.csl",
+      "sha256": "835c95489256e84a0aea2802c08893b308b39bf56214aa02031c8c70a256c289",
+      "bytes": 203391
+    },
+    {
+      "repository_path": "README.md",
+      "url": "https://raw.githubusercontent.com/haimsaw/OReX/089db1f757022606399d5f070d65bd172fe69362/README.md",
+      "local_path": "source/README.md",
+      "sha256": "7c43a25a347fe629aaab8b3fd5795a25d5fe9744a707ccb4a8b9b280f8408978",
+      "bytes": 3205
+    }
+  ],
+  "citation": "Sawdayee, Vaxman, Bermano. OReX: Object Reconstruction from Planar Cross-sections Using Neural Fields. CVPR 2023.",
+  "reference_selection": "balloondog_scaled.stl, not balloondog_box_scaled.stl"
+}

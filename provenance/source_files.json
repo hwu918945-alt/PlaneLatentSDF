@@ -1,0 +1,17 @@
+[
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/LV_Epi_CrossSDF_MeshPrior_MnM2_v11_5static/src/v11_5static/data.py",
+    "copy": "provenance/data.py",
+    "sha256": "f06f01c4d2c311e4950371d3a00fd0073a50b3f7418a515523ade25b40e9ce9f"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/LV_Epi_CrossSDF_MeshPrior_MnM2_v11_5static/src/v11_5static/evaluation.py",
+    "copy": "provenance/evaluation.py",
+    "sha256": "007b51939774f33e023bf44d247f39f95a440243033b577b870d3604905e5fae"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/LV_Epi_CrossSDF_MeshPrior_MnM2_v11_5static/data/static_endpoint_manifest.json",
+    "copy": "provenance/static_endpoint_manifest.json",
+    "sha256": "35e96ffa03cb7f0d299ba763adc5cad36a8c30af25436d40c9dac1dec809c549"
+  }
+]

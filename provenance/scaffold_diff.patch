@@ -1,0 +1,381 @@
+--- provided/README.md
++++ deployed/README.md
+@@ -1,26 +1,42 @@
+-# PlaneLatentSDF 部署包
++# PlaneLatentSDF
+ 
+-先读 `AGENT_DEPLOYMENT.md`，再运行 `python verify_core.py`。主配置为 `config.json`。
++本仓库按 [AGENT_DEPLOYMENT.md](AGENT_DEPLOYMENT.md) 部署。压缩包已直接解包于此。
++首个目标是 LV epicardial envelope 的整个填充区域，ED/ES 共享模型，单标量场。
++网络、物理距离插值、真实层/LOO 监督、EMA 蒸馏、二阶几何、接缝和完整三维
++Eikonal 均沿用文档。原始初始化的近零场问题及数值修复详见
++[DEPLOYMENT_REPORT.md](DEPLOYMENT_REPORT.md)。
+ 
+-核心已经实现：plane MLP编码、物理距离latent插值、单标量query decoder、真实/留一层监督、EMA分布蒸馏、二阶法向正则、接缝约束、完整三维Eikonal、训练及Marching Cubes。
+-
+-必须由部署agent完成的对接：把已有MnM2对齐SAX缓存映射为文档中的manifest或NPZ。没有提供真实缓存字节，不能声称已经完成这个字段映射。代码内 `TODO` 指出需要核对的事项，核心函数不是空实现。
++`adapt_static_cache.py` 只读取已有 v11_5static 闭合 SAX epi 轮廓及平面几何，
++用 `contours * scale + center` 恢复已对齐毫米，保留患者固定划分 285/36/36。
++数据为 570/72/72 个 ED/ES 文件，统一固定 100 mm 缩放。3 个 stress 病例不进入
++主训练和评价。图像、LAX、mask、模板、motion 不进入模型。适配后数据独立保存在
++本仓库；几何评价函数已物理复制至 `vendor/`，来源副本和校验值在 `provenance/`。
+ 
+ ```bash
+-python -m pip install -r requirements.txt
+-python verify_core.py
+-python make_synthetic.py --output synthetic
+-python train.py --data synthetic --output runs/smoke --device cpu --epochs 1 --max-steps 1
++PYTHON=/gpfs/work/aac/haoyuwu24/.conda/envs/haoyu/bin/python
++"$PYTHON" verify_core.py --output verification_local.json
++"$PYTHON" adapt_static_cache.py --source ../LV_Epi_CrossSDF_MeshPrior_MnM2_v11_5static
++"$PYTHON" prepare_cache.py --manifest data/aligned_sax_manifest.json --output data/plane_sdf
++"$PYTHON" scripts/verify_dataset.py
++"$PYTHON" train.py --config config.json --data data/plane_sdf --output runs/main --device cuda
++"$PYTHON" evaluate.py --checkpoint runs/main/best.pt --data data/plane_sdf --split test --output outputs/main/test --device cuda --meshes --resolution 160
++sbatch sbatch/train_main.sh
+ ```
+ 
+-上面的短训练只确认入口运行；所有loss开启的梯度检查在verify中。`verification.json`和`smoke_validation.json`记录本包已执行的验证，不是临床效果报告。
++转换器拒绝覆盖已有数据。`preflight/` 保存缓存检查、全部 loss 的短训练和小规模
++拟合；它们独立于正式 200 epochs 主实验。核心验收见 `verification_local.json`。
+ 
+-真实部署：
++每 5 epochs 和最后一个 epoch 使用全部验证患者，按实际 direct/LOO 零轮廓 MCD
++及文档中的 Eikonal/sign 项选 checkpoint。缺失/截断层对选模施加明确的 50 mm
++惩罚，同时独立报告 coverage；这项惩罚不计入实测 MCD。test 不参与选模。
+ 
+-```bash
+-python prepare_cache.py --manifest aligned_sax_manifest.json --output data/plane_sdf
+-python train.py --data data/plane_sdf --output runs/main --device cuda
+-python extract_mesh.py --checkpoint runs/main/best.pt --case data/plane_sdf/test/patient_001_ED.npz --output outputs/patient_001_ED.obj
+-```
++正式 job 训练后分别评价 val/test，导出每相位 mesh。指标是 **epi-only SAX** 的
++Dice/MCD/HD95，使用既有项目的对称采样距离定义和 0.5 mm 栅格 Dice。
++这些指标不等同于 epi/endo shell 或全体积 3D GT 指标，也不汇报 EDV/ESV/EF。
++只提取观测轴向范围，默认端部可能开放，正式 job 不人工封口。
++每个 mesh 报告开边、非流形边、分辨率/spacing、截断和毫米 bbox。
+ 
+-注意：二维轮廓SDF不是精确三维距离；EMA教师不接受梯度；Eikonal必须求包含latent位置插值的完整场梯度。默认只重建观测stack轴向范围，端部可能开放；人工封口需显式 `--cap-stack`，不能当成真实端部恢复。详见部署文档。
++`runs/main/TRAINING_COMPLETE.json` 和 `outputs/main/PIPELINE_COMPLETE.json`
++区分训练完成和整条流水线完成。流水线记录 mesh 失败病例，不宣称临床质量通过。
++日志保存在 `logs/main_JOBID.out` / `.err`。正式 job 支持同配置从 `last.pt` 恢复，
++使用文件锁防止同输出目录的重复训练。
+--- provided/config.json
++++ deployed/config.json
+@@ -3,6 +3,9 @@
+   "epochs": 200,
+   "batch_cases": 4,
+   "cpu_threads": 1,
++  "geometry_validation_interval": 5,
++  "validation_spacing_mm": 1.0,
++  "decoder_initialization": "geometric_sphere",
+   "lr": 0.0002,
+   "weight_decay": 0.00001,
+   "clip_grad": 5.0,
+--- provided/core/losses.py
++++ deployed/core/losses.py
+@@ -8,7 +8,7 @@
+     return torch.autograd.grad(value.sum(), q, create_graph=create_graph, retain_graph=True)[0]
+ 
+ 
+-def observed_loss(decoder, q, d2, boundary, z, axis, phase, tau=0.02):
++def observed_loss(decoder, q, d2, boundary, z, axis, phase, tau=0.02, diagnostics=None):
+     """Same loss for direct z_i and leave-one-out z'_i.
+     2D SDF is a plane distance, not an exact 3D SDF label.
+     Local first-order compatibility: F ~= ||P_plane grad F|| * d2.
+@@ -20,6 +20,8 @@
+     tangent = grad - (grad * axis).sum(-1, keepdim=True) * axis
+     factor = tangent.norm(dim=-1).detach()  # A fixed scale for this step, not another head.
+     near = (d2.abs() > 1e-5) & (d2.abs() < tau) & (factor > 0.15)
++    if diagnostics is not None:
++        diagnostics.append(float(near.float().mean().detach()))
+     residual = (pred - factor * d2) / tau
+     distance = F.smooth_l1_loss(residual[near], torch.zeros_like(residual[near]), beta=0.2) if bool(near.any()) else pred.sum() * 0
+     signmask = d2.abs() > 0.002
+--- provided/core/mesh.py
++++ deployed/core/mesh.py
+@@ -26,11 +26,15 @@
+     _, counts = np.unique(edges, axis=0, return_counts=True)
+     at_border = np.any((vertices_stack <= np.asarray(lower) + spacing * 0.1) |
+                        (vertices_stack >= np.asarray(upper) - spacing * 0.1), axis=1)
++    contacts = (vertices_stack <= np.asarray(lower)+spacing*.1)|(vertices_stack >= np.asarray(upper)-spacing*.1)
+     return vertices_mm, faces, {'vertices': int(len(vertices)), 'faces': int(len(faces)),
+                                 'boundary_edges': int(np.sum(counts == 1)),
+                                 'nonmanifold_edges': int(np.sum(counts > 2)),
+                                 'watertight_edge_test': bool(np.all(counts == 2)),
+                                 'vertices_touching_domain': int(at_border.sum()),
++                                'vertices_on_lateral_boundary': int(contacts[:,:2].any(1).sum()),
++                                'vertices_on_axial_boundary': int(contacts[:,2].sum()),
++                                'lateral_domain_truncated': bool(contacts[:,:2].any()),
+                                 'field_min': float(volume.min()), 'field_max': float(volume.max())}
+ 
+ 
+--- provided/core/training.py
++++ deployed/core/training.py
+@@ -16,15 +16,16 @@
+     direct = z.sum() * 0
+     loo = z.sum() * 0
+     z_loo = leave_one_out_latent(s, z)
++    calibration = []
+     for i in range(len(s)):
+         p = torch.randint(case['q'].shape[1], (cfg['supervision_points'],), device=z.device)
+         j = torch.randint(case['boundary'].shape[1], (cfg['boundary_points'],), device=z.device)
+         q, d, boundary = case['q'][i, p], case['sdf2d'][i, p], case['boundary'][i, j]
+         direct = direct + observed_loss(student.decoder, q, d, boundary,
+-                                       z[i:i+1].expand(len(q), -1), axis, phase, cfg['tau']) / len(s)
++                                       z[i:i+1].expand(len(q), -1), axis, phase, cfg['tau'], calibration) / len(s)
+         if 0 < i < len(s) - 1:
+             loo = loo + observed_loss(student.decoder, q, d, boundary,
+-                                     z_loo[i-1:i].expand(len(q), -1), axis, phase, cfg['tau']) / (len(s) - 2)
++                                     z_loo[i-1:i].expand(len(q), -1), axis, phase, cfg['tau'], calibration) / (len(s) - 2)
+     # No current-plane code is used to construct its leave-one-out z'_i.
+     q_gap, k, a = gap_queries(case, cfg['regularization_points'], cfg['geometry_eps'])
+     field_fn = lambda q: student.field(q, s, z, axis, phase)
+@@ -50,4 +51,5 @@
+     logs['teacher_entropy'] = float(-(probability * probability.clamp_min(1e-9).log()).sum(-1).mean())
+     logs['latent_std'] = float(z.std(dim=0, unbiased=False).mean().detach())
+     logs['ramp'] = ramp
++    logs['calibration_valid_fraction'] = sum(calibration)/len(calibration)
+     return total, logs, teacher_logits.detach()
+--- provided/extract_mesh.py
++++ deployed/extract_mesh.py
+@@ -6,6 +6,42 @@
+ from core.data import load_case
+ from core.model import PlaneField
+ from core.mesh import stack_basis, volume_to_mesh, write_obj
++
++
++def extract(model, case, out, resolution=160, chunk=32768, cap_stack=False):
++    basis = stack_basis(case['axis'].cpu().numpy())
++    contour_stack = case['boundary'].cpu().numpy().reshape(-1, 3) @ basis
++    lower, upper = contour_stack.min(0), contour_stack.max(0)
++    lower[:2] -= 0.15; upper[:2] += 0.15
++    low_s, high_s = float(case['s'][0]), float(case['s'][-1])
++    lower[2], upper[2] = low_s, high_s
++    if cap_stack:
++        pad = (high_s-low_s)/(resolution-3)
++        lower[2] -= pad; upper[2] += pad
++    shape = (resolution,)*3
++    volume = np.empty(np.prod(shape), np.float32)
++    with torch.no_grad():
++        latent = model.encoder(case['q'],case['sdf2d'],case['phase'])
++        for start in range(0,len(volume),chunk):
++            stop = min(len(volume),start+chunk)
++            index = np.stack(np.unravel_index(np.arange(start,stop),shape),-1)
++            coords = lower+index/(resolution-1)*(upper-lower)
++            clamped = coords.copy(); clamped[:,2] = np.clip(clamped[:,2],low_s,high_s)
++            q = torch.as_tensor(clamped@basis.T,dtype=torch.float32,device=latent.device)
++            value = model.field(q,case['s'],latent,case['axis'],case['phase']).cpu().numpy()
++            if cap_stack:
++                value = np.maximum(value,np.maximum(low_s-coords[:,2],coords[:,2]-high_s))
++            volume[start:stop] = value
++    vertices,faces,report = volume_to_mesh(volume.reshape(shape),lower,upper,basis,case['center_mm'],case['scale_mm'])
++    out = Path(out); out.parent.mkdir(parents=True,exist_ok=True)
++    write_obj(out,vertices,faces)
++    report.update(case_id=case['case_id'],phase=case['phase'],artificial_axial_caps=cap_stack,resolution=resolution,
++                  grid_spacing_mm=((upper-lower)/(resolution-1)*case['scale_mm']).tolist(),
++                  anatomy='LV_epi_envelope',full_anatomical_extent_verified=False,
++                  coordinate_frame='v11_5static aligned oriented millimetres',
++                  bbox_mm=[vertices.min(0).tolist(),vertices.max(0).tolist()])
++    out.with_suffix('.report.json').write_text(json.dumps(report,indent=2))
++    return report
+ 
+ 
+ def main():
+@@ -25,39 +61,7 @@
+     model = PlaneField(**saved['config']['model']).to(args.device).eval()
+     model.load_state_dict(saved['student'])  # inference uses the supervised ONLINE model
+     case = load_case(args.case, args.device)
+-    basis = stack_basis(case['axis'].cpu().numpy())
+-    contour_stack = case['boundary'].cpu().numpy().reshape(-1, 3) @ basis
+-    lower, upper = contour_stack.min(0), contour_stack.max(0)
+-    lower[:2] -= 0.15; upper[:2] += 0.15
+-    low_s, high_s = float(case['s'][0]), float(case['s'][-1])
+-    lower[2], upper[2] = low_s, high_s
+-    if args.cap_stack:
+-        pad = (high_s - low_s) / (args.resolution - 3)
+-        lower[2] -= pad; upper[2] += pad
+-    shape = (args.resolution,) * 3
+-    volume = np.empty(np.prod(shape), np.float32)
+-    with torch.no_grad():
+-        latent = model.encoder(case['q'], case['sdf2d'], case['phase'])
+-        for start in range(0, len(volume), args.chunk):
+-            stop = min(len(volume), start + args.chunk)
+-            index = np.stack(np.unravel_index(np.arange(start, stop), shape), -1)
+-            coords = lower + index / (args.resolution - 1) * (upper - lower)
+-            clamped = coords.copy(); clamped[:, 2] = np.clip(clamped[:, 2], low_s, high_s)
+-            q = torch.as_tensor(clamped @ basis.T, dtype=torch.float32, device=args.device)
+-            value = model.field(q, case['s'], latent, case['axis'], case['phase']).cpu().numpy()
+-            if args.cap_stack:
+-                # Intersection with observed axial slab. This is a documented cap,
+-                # not a learned apex or a guarantee of valid full-heart volume.
+-                value = np.maximum(value, np.maximum(low_s - coords[:, 2], coords[:, 2] - high_s))
+-            volume[start:stop] = value
+-    vertices, faces, report = volume_to_mesh(volume.reshape(shape), lower, upper, basis,
+-                                            case['center_mm'], case['scale_mm'])
+-    out = Path(args.output); out.parent.mkdir(parents=True, exist_ok=True)
+-    write_obj(out, vertices, faces)
+-    report.update(case_id=case['case_id'], phase=case['phase'], artificial_axial_caps=args.cap_stack,
+-                  resolution=args.resolution, anatomy='single filled target; see manifest',
+-                  full_anatomical_extent_verified=False)
+-    out.with_suffix('.report.json').write_text(json.dumps(report, indent=2))
++    report = extract(model,case,args.output,args.resolution,args.chunk,args.cap_stack)
+     print(json.dumps(report), flush=True)
+ 
+ 
+--- provided/prepare_cache.py
++++ deployed/prepare_cache.py
+@@ -1,6 +1,5 @@
+-"""Convert a neutral contour manifest into the normalized NPZ contract.
+-TODO(AGENT-CACHE): map the existing M&Ms-2 ALIGNED cache to this manifest;
+-do not rerun alignment or replace its validated affine transform.
++"""Convert neutral aligned contours to NPZ; adapt_static_cache.py supplies them.
++The existing physical alignment is preserved; numerical plane errors are audited.
+ """
+ import argparse
+ import json
+@@ -22,7 +21,7 @@
+         uv = np.asarray(plane['contour_uv_mm'], float)
+         if len(uv) > 3 and np.linalg.norm(uv[0] - uv[-1]) < 1e-6:
+             uv = uv[:-1]
+-        # TODO(AGENT-CACHE): consistently orient contour and choose starting index.
++        # adapt_static_cache.py provides CCW polygons with a common angular start.
+         bc = resample_contour(uv, 256)
+         normals.append(np.cross(u, v))
+         world_boundaries.append(origin + bc[:, :1] * u + bc[:, 1:2] * v)
+@@ -68,7 +67,9 @@
+     np.savez_compressed(output, q=np.asarray(q, np.float32), sdf2d=np.asarray(sdf, np.float32),
+                         boundary=np.asarray(boundary, np.float32), s=np.asarray(s, np.float32),
+                         axis=np.asarray(axis, np.float32), center_mm=center, scale_mm=np.array(scale),
+-                        phase=np.array(0 if record['phase'] == 'ED' else 1), case_id=np.array(record['case_id']))
++                        phase=np.array(0 if record['phase'] == 'ED' else 1), case_id=np.array(record['case_id']),
++                        anatomy=np.array(record.get('anatomy', 'single_filled_region')),
++                        provenance_json=np.array(json.dumps({k:v for k,v in record.items() if k!='planes'})))
+     return {'file': str(output), 'max_plane_projection_mm': max_projection, 'explicit_parallel_projection': project_parallel}
+ 
+ 
+@@ -83,6 +84,7 @@
+     reports = []
+     rng = np.random.default_rng(20261009)
+     identities = set()
++    patient_splits = {}
+     for record in data['records']:
+         if record['phase'] not in ['ED', 'ES'] or record['split'] not in ['train', 'val', 'test']:
+             raise ValueError('Invalid phase or split')
+@@ -91,6 +93,9 @@
+         if key in identities:
+             raise ValueError('Duplicate patient/phase manifest entry')
+         identities.add(key)
++        previous = patient_splits.setdefault(record['case_id'], record['split'])
++        if previous != record['split']:
++            raise ValueError(f'Patient split leakage: {record["case_id"]}')
+         name = ''.join(c if c.isalnum() or c in '-_' else '_' for c in record['case_id'])
+         folder = root / record['split']; folder.mkdir(exist_ok=True)
+         target = folder / f'{name}_{record["phase"]}.npz'
+--- provided/train.py
++++ deployed/train.py
+@@ -3,6 +3,7 @@
+ import json
+ import math
+ import random
++import time
+ from pathlib import Path
+ import numpy as np
+ import torch
+@@ -11,6 +12,8 @@
+ from core.losses import DistanceWeightedDistillation
+ from core.losses import coordinate_gradient
+ from core.training import case_objective
++from core.evaluation import case_geometry, aggregate_geometry
++from core.initialization import initialize_decoder
+ 
+ 
+ def validate(student, paths, device):
+@@ -77,6 +80,11 @@
+     out = Path(args.output); out.mkdir(parents=True, exist_ok=True)
+     (out / 'effective_config.json').write_text(json.dumps(cfg, indent=2))
+     student = PlaneField(**cfg['model']).to(args.device)
++    if cfg.get('decoder_initialization') not in [None,'geometric_sphere']:
++        raise ValueError('Unknown decoder initialization')
++    if cfg.get('decoder_initialization') == 'geometric_sphere':
++        initialization = initialize_decoder(student)
++        (out/'initialization.json').write_text(json.dumps(initialization,indent=2))
+     teacher = make_teacher(student)
+     distill = DistanceWeightedDistillation(prototypes=cfg['model']['prototypes']).to(args.device)
+     optimizer = torch.optim.AdamW(student.parameters(), lr=cfg['lr'], weight_decay=cfg['weight_decay'])
+@@ -95,6 +103,7 @@
+             torch.cuda.set_rng_state_all([x.cpu() for x in saved['rng_cuda']])
+     train_cases = [load_case(x, 'cpu') for x in paths['train']]
+     for epoch in range(start_epoch, cfg['epochs']):
++        epoch_start = time.monotonic()
+         student.train(); teacher.eval()
+         order = list(range(len(train_cases))); random.shuffle(order)
+         records = []
+@@ -104,12 +113,20 @@
+             raw_logits = []
+             for index in group:
+                 c = {k: v.to(args.device) if torch.is_tensor(v) else v for k, v in train_cases[index].items()}
+-                loss, log, logits = case_objective(student, teacher, distill, c, cfg, epoch)
+-                if not bool(torch.isfinite(loss)):
+-                    raise FloatingPointError(f'Nonfinite loss: {c["case_id"]}, {log}')
+-                (loss / len(group)).backward()
++                try:
++                    loss, log, logits = case_objective(student, teacher, distill, c, cfg, epoch)
++                    if not bool(torch.isfinite(loss)):
++                        raise FloatingPointError(f'Nonfinite loss: {log}')
++                    (loss / len(group)).backward()
++                except Exception as error:
++                    (out/'failure_context.json').write_text(json.dumps(dict(epoch=epoch,global_step=global_step,case_id=c['case_id'],phase=c['phase'],error=str(error)),indent=2))
++                    raise
+                 raw_logits.append(logits); records.append(log)
+-            grad = torch.nn.utils.clip_grad_norm_(student.parameters(), cfg['clip_grad'], error_if_nonfinite=True)
++            try:
++                grad = torch.nn.utils.clip_grad_norm_(student.parameters(), cfg['clip_grad'], error_if_nonfinite=True)
++            except Exception as error:
++                (out/'failure_context.json').write_text(json.dumps(dict(epoch=epoch,global_step=global_step,cases=[train_cases[i]['path'] for i in group],error=str(error)),indent=2))
++                raise
+             optimizer.step()
+             distill.update_center(torch.cat(raw_logits))
+             progress = min(1., (epoch + 1) / cfg['epochs'])
+@@ -120,22 +137,37 @@
+                 break
+         metrics = {k: float(np.mean([r[k] for r in records])) for k in records[0]}
+         metrics.update(validate(student, paths['val'], args.device))
+-        metrics.update(epoch=epoch, global_step=global_step, grad_norm=float(grad))
+-        improved = metrics['selection_score'] < best
++        metrics['proxy_selection_score'] = metrics.pop('selection_score')
++        selection_epoch = epoch == 0 or (epoch+1)%cfg.get('geometry_validation_interval',5)==0 or epoch+1==cfg['epochs'] or bool(args.max_steps)
++        if selection_epoch:
++            student.eval()
++            geometry = [case_geometry(student, load_case(path,args.device),cfg.get('validation_spacing_mm',1.0)) for path in paths['val']]
++            geometric = aggregate_geometry(geometry)
++            metrics.update({'val_'+k:v for k,v in geometric.items()})
++            metrics['selection_score'] = geometric['direct_selection_penalty']+geometric['loo_selection_penalty']+10*metrics['val_eikonal']+10*(1-metrics['val_sign_balanced_accuracy'])
++            student.train()
++        metrics.update(epoch=epoch, global_step=global_step, grad_norm=float(grad), nonfinite_count=0, epoch_seconds=time.monotonic()-epoch_start)
++        if not all(v is None or math.isfinite(v) for v in metrics.values()):
++            raise FloatingPointError(f'Nonfinite diagnostics at epoch {epoch}: {metrics}')
++        improved = selection_epoch and metrics['selection_score'] < best
+         if improved:
+             best = metrics['selection_score']
+         ckpt = dict(student=student.state_dict(), teacher=teacher.state_dict(), distill=distill.state_dict(),
+                     optimizer=optimizer.state_dict(), epoch=epoch, global_step=global_step, best=best, config=cfg,
+                     rng_python=random.getstate(), rng_numpy=np.random.get_state(), rng_torch=torch.get_rng_state(),
+                     rng_cuda=torch.cuda.get_rng_state_all() if torch.cuda.is_available() else None)
+-        torch.save(ckpt, out / 'last.pt')
++        torch.save(ckpt, out / 'last.pt.tmp')
++        (out / 'last.pt.tmp').replace(out / 'last.pt')
+         if improved:
+-            torch.save(ckpt, out / 'best.pt')
++            torch.save(ckpt, out / 'best.pt.tmp')
++            (out / 'best.pt.tmp').replace(out / 'best.pt')
+         with (out / 'metrics.jsonl').open('a') as f:
+             f.write(json.dumps(metrics) + '\n')
+         print(json.dumps(metrics), flush=True)
+         if args.max_steps and global_step >= args.max_steps:
+             break
++    if not args.max_steps:
++        (out/'TRAINING_COMPLETE.json').write_text(json.dumps(dict(epochs=cfg['epochs'],global_step=global_step,best_selection_score=best,checkpoint=str((out/'best.pt').resolve()),test_used_for_selection=False),indent=2))
+ 
+ 
+ if __name__ == '__main__':

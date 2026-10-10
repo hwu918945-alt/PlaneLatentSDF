@@ -1,0 +1,5018 @@
+{
+  "source_manifest_sha256": "35e96ffa03cb7f0d299ba763adc5cad36a8c30af25436d40c9dac1dec809c549",
+  "phase_file_counts": {
+    "train": 570,
+    "test": 72,
+    "val": 72
+  },
+  "patient_counts": {
+    "train": 285,
+    "test": 36,
+    "val": 36
+  },
+  "excluded_stress_patients": 3,
+  "field_mapping": "aligned_mm = contours * static.scale + static.center",
+  "plane_basis": "unit-normalized plane_u/plane_v; spacing already in 3D contours",
+  "quantization_projection_max_mm": 0.03788820813275057,
+  "common_parallel_approximation": false,
+  "records": [
+    {
+      "case_id": "002",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02283242864675133
+    },
+    {
+      "case_id": "002",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024023355427161126
+    },
+    {
+      "case_id": "003",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02825041715942943
+    },
+    {
+      "case_id": "003",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025890226952145542
+    },
+    {
+      "case_id": "004",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02217283140051996
+    },
+    {
+      "case_id": "004",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023057542171010414
+    },
+    {
+      "case_id": "006",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02950914079981673
+    },
+    {
+      "case_id": "006",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.033726303980229355
+    },
+    {
+      "case_id": "007",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02461144013386601
+    },
+    {
+      "case_id": "007",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023766839261946768
+    },
+    {
+      "case_id": "008",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025895023016218734
+    },
+    {
+      "case_id": "008",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024333486658753716
+    },
+    {
+      "case_id": "009",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026007384381661926
+    },
+    {
+      "case_id": "009",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02572326825857848
+    },
+    {
+      "case_id": "010",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0241432938886786
+    },
+    {
+      "case_id": "010",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023476880990925687
+    },
+    {
+      "case_id": "011",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022752921385647173
+    },
+    {
+      "case_id": "011",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.021867360450851726
+    },
+    {
+      "case_id": "012",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02776982912926143
+    },
+    {
+      "case_id": "012",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02243372282229716
+    },
+    {
+      "case_id": "013",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02800549103476334
+    },
+    {
+      "case_id": "013",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027861115619016354
+    },
+    {
+      "case_id": "014",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02822580356011479
+    },
+    {
+      "case_id": "014",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02762304867890999
+    },
+    {
+      "case_id": "015",
+      "phase": "ED",
+      "split": "test",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.031534697559890364
+    },
+    {
+      "case_id": "015",
+      "phase": "ES",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.032139872877715345
+    },
+    {
+      "case_id": "016",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027669192670257723
+    },
+    {
+      "case_id": "016",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02761268706901846
+    },
+    {
+      "case_id": "017",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02425876700934107
+    },
+    {
+      "case_id": "017",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02191297693790019
+    },
+    {
+      "case_id": "018",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024630455418385162
+    },
+    {
+      "case_id": "018",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.021287828153216167
+    },
+    {
+      "case_id": "019",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.027242206596260476
+    },
+    {
+      "case_id": "019",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026011042328581407
+    },
+    {
+      "case_id": "020",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025196531298557565
+    },
+    {
+      "case_id": "020",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024187665752599223
+    },
+    {
+      "case_id": "021",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024676755314902335
+    },
+    {
+      "case_id": "021",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02533330238770427
+    },
+    {
+      "case_id": "022",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023704725786861846
+    },
+    {
+      "case_id": "022",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.016248516447915605
+    },
+    {
+      "case_id": "023",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02880483936768942
+    },
+    {
+      "case_id": "023",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03016873864164505
+    },
+    {
+      "case_id": "024",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027196645914849545
+    },
+    {
+      "case_id": "024",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028036881000381597
+    },
+    {
+      "case_id": "025",
+      "phase": "ED",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024411218692141457
+    },
+    {
+      "case_id": "025",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02336579142034361
+    },
+    {
+      "case_id": "026",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02704630811999078
+    },
+    {
+      "case_id": "026",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.026166272254294725
+    },
+    {
+      "case_id": "027",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.026931499729798792
+    },
+    {
+      "case_id": "027",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026406516706501185
+    },
+    {
+      "case_id": "028",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.027223850636015533
+    },
+    {
+      "case_id": "028",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.02374805447583295
+    },
+    {
+      "case_id": "029",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024961785058368702
+    },
+    {
+      "case_id": "029",
+      "phase": "ES",
+      "split": "test",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.024309741110634744
+    },
+    {
+      "case_id": "030",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.020845919540450144
+    },
+    {
+      "case_id": "030",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022833713218404314
+    },
+    {
+      "case_id": "031",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.021345298940151275
+    },
+    {
+      "case_id": "031",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.018671795913777583
+    },
+    {
+      "case_id": "032",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.024925356868643087
+    },
+    {
+      "case_id": "032",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.024617096031830446
+    },
+    {
+      "case_id": "033",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02607278932164636
+    },
+    {
+      "case_id": "033",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.0197592552588651
+    },
+    {
+      "case_id": "034",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026212506903190685
+    },
+    {
+      "case_id": "034",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025501301450410987
+    },
+    {
+      "case_id": "035",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02345065106214964
+    },
+    {
+      "case_id": "035",
+      "phase": "ES",
+      "split": "test",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.023767810976209655
+    },
+    {
+      "case_id": "036",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.023832563536821245
+    },
+    {
+      "case_id": "036",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025204688425765967
+    },
+    {
+      "case_id": "037",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02208428630558884
+    },
+    {
+      "case_id": "037",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022486613680569603
+    },
+    {
+      "case_id": "038",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028690436950328375
+    },
+    {
+      "case_id": "038",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029286283852271448
+    },
+    {
+      "case_id": "039",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028986663940109677
+    },
+    {
+      "case_id": "039",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027808769933680644
+    },
+    {
+      "case_id": "040",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025217371270387666
+    },
+    {
+      "case_id": "040",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025926198089913907
+    },
+    {
+      "case_id": "041",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02905025317425955
+    },
+    {
+      "case_id": "041",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030746764228683197
+    },
+    {
+      "case_id": "042",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03226416685474914
+    },
+    {
+      "case_id": "042",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03259228098009941
+    },
+    {
+      "case_id": "043",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028018153060610465
+    },
+    {
+      "case_id": "043",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02962708078117931
+    },
+    {
+      "case_id": "044",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031618718167454665
+    },
+    {
+      "case_id": "044",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02859026061391151
+    },
+    {
+      "case_id": "045",
+      "phase": "ED",
+      "split": "train",
+      "planes": 12,
+      "max_quantization_plane_residual_mm": 0.03788820813275057
+    },
+    {
+      "case_id": "045",
+      "phase": "ES",
+      "split": "train",
+      "planes": 12,
+      "max_quantization_plane_residual_mm": 0.03406701927597694
+    },
+    {
+      "case_id": "046",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030124998392641746
+    },
+    {
+      "case_id": "046",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029978506651182894
+    },
+    {
+      "case_id": "047",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02601647818545396
+    },
+    {
+      "case_id": "047",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02709397857019385
+    },
+    {
+      "case_id": "048",
+      "phase": "ED",
+      "split": "train",
+      "planes": 12,
+      "max_quantization_plane_residual_mm": 0.033996062429310615
+    },
+    {
+      "case_id": "048",
+      "phase": "ES",
+      "split": "train",
+      "planes": 12,
+      "max_quantization_plane_residual_mm": 0.035599405818149035
+    },
+    {
+      "case_id": "049",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027566209070102175
+    },
+    {
+      "case_id": "049",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024844138500850054
+    },
+    {
+      "case_id": "050",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02425703518648609
+    },
+    {
+      "case_id": "050",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026065947616244887
+    },
+    {
+      "case_id": "051",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02877866547834544
+    },
+    {
+      "case_id": "051",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029873998211964747
+    },
+    {
+      "case_id": "052",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.032139930660664465
+    },
+    {
+      "case_id": "052",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030004016660048986
+    },
+    {
+      "case_id": "053",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02720986292252438
+    },
+    {
+      "case_id": "053",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.020875233574048527
+    },
+    {
+      "case_id": "054",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02932141522188902
+    },
+    {
+      "case_id": "054",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029266887662543067
+    },
+    {
+      "case_id": "055",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03157729272468615
+    },
+    {
+      "case_id": "055",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03007084724396032
+    },
+    {
+      "case_id": "056",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02872719858422662
+    },
+    {
+      "case_id": "056",
+      "phase": "ES",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029273350584006666
+    },
+    {
+      "case_id": "057",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02930456818929585
+    },
+    {
+      "case_id": "057",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028026711735670215
+    },
+    {
+      "case_id": "058",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028488388245270023
+    },
+    {
+      "case_id": "058",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02764026089557592
+    },
+    {
+      "case_id": "059",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03243672042317104
+    },
+    {
+      "case_id": "059",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031150525294114523
+    },
+    {
+      "case_id": "060",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02930546488961781
+    },
+    {
+      "case_id": "060",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029005239434147685
+    },
+    {
+      "case_id": "061",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029934802393642237
+    },
+    {
+      "case_id": "061",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026106236303582334
+    },
+    {
+      "case_id": "062",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02747447114779764
+    },
+    {
+      "case_id": "062",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028079959173491143
+    },
+    {
+      "case_id": "063",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03500674203631734
+    },
+    {
+      "case_id": "063",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03213332341240897
+    },
+    {
+      "case_id": "064",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03198908502718263
+    },
+    {
+      "case_id": "064",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03320349285391787
+    },
+    {
+      "case_id": "065",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03168205434296467
+    },
+    {
+      "case_id": "065",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02979661550676104
+    },
+    {
+      "case_id": "066",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.034001776244432014
+    },
+    {
+      "case_id": "066",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03403925917650017
+    },
+    {
+      "case_id": "067",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02975092430685419
+    },
+    {
+      "case_id": "067",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028810862774774355
+    },
+    {
+      "case_id": "068",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03164683008043309
+    },
+    {
+      "case_id": "068",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.032028488741656896
+    },
+    {
+      "case_id": "069",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028718552567823977
+    },
+    {
+      "case_id": "069",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022498987582932676
+    },
+    {
+      "case_id": "070",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.036521461128501104
+    },
+    {
+      "case_id": "070",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.036218593556082194
+    },
+    {
+      "case_id": "071",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02682662238862039
+    },
+    {
+      "case_id": "071",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023722069877405896
+    },
+    {
+      "case_id": "072",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029338987885116716
+    },
+    {
+      "case_id": "072",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027089907557307065
+    },
+    {
+      "case_id": "073",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02557574813402162
+    },
+    {
+      "case_id": "073",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02462538852661036
+    },
+    {
+      "case_id": "074",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02433286160155023
+    },
+    {
+      "case_id": "074",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02440437707978015
+    },
+    {
+      "case_id": "075",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.023501242377296894
+    },
+    {
+      "case_id": "075",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02314463173775587
+    },
+    {
+      "case_id": "076",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026834885432981067
+    },
+    {
+      "case_id": "076",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02662727407233902
+    },
+    {
+      "case_id": "077",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03338966633271217
+    },
+    {
+      "case_id": "077",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03038319143669013
+    },
+    {
+      "case_id": "078",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02748445491752242
+    },
+    {
+      "case_id": "078",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0274610021742682
+    },
+    {
+      "case_id": "079",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027262784803741582
+    },
+    {
+      "case_id": "079",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028948260406558173
+    },
+    {
+      "case_id": "080",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02727288841354637
+    },
+    {
+      "case_id": "080",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022647508020116034
+    },
+    {
+      "case_id": "081",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.033215579624695325
+    },
+    {
+      "case_id": "081",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028008411313883545
+    },
+    {
+      "case_id": "082",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02378306307195076
+    },
+    {
+      "case_id": "082",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022264066775739774
+    },
+    {
+      "case_id": "083",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03065023373840659
+    },
+    {
+      "case_id": "083",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02844335507744982
+    },
+    {
+      "case_id": "084",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026693558995855085
+    },
+    {
+      "case_id": "084",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030028978838091712
+    },
+    {
+      "case_id": "085",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.030435503218269887
+    },
+    {
+      "case_id": "085",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023833605419619344
+    },
+    {
+      "case_id": "086",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031130247774802524
+    },
+    {
+      "case_id": "086",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03092751696906486
+    },
+    {
+      "case_id": "087",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031123781669726083
+    },
+    {
+      "case_id": "087",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029811767678076005
+    },
+    {
+      "case_id": "088",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.025679767183855923
+    },
+    {
+      "case_id": "088",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02826548898454639
+    },
+    {
+      "case_id": "089",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026647251341035568
+    },
+    {
+      "case_id": "089",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025536880640656925
+    },
+    {
+      "case_id": "090",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029222174119446723
+    },
+    {
+      "case_id": "090",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027425263061553323
+    },
+    {
+      "case_id": "091",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02612361853539515
+    },
+    {
+      "case_id": "091",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025588542733706154
+    },
+    {
+      "case_id": "092",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023047682762342012
+    },
+    {
+      "case_id": "092",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.018692392980329778
+    },
+    {
+      "case_id": "093",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023631059280471586
+    },
+    {
+      "case_id": "093",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.02172274244075513
+    },
+    {
+      "case_id": "094",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028978167128361012
+    },
+    {
+      "case_id": "094",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027818639213968023
+    },
+    {
+      "case_id": "095",
+      "phase": "ED",
+      "split": "train",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.02714078538180294
+    },
+    {
+      "case_id": "095",
+      "phase": "ES",
+      "split": "train",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.02514466350174156
+    },
+    {
+      "case_id": "096",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02786248462684506
+    },
+    {
+      "case_id": "096",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02827437828184233
+    },
+    {
+      "case_id": "097",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028734477332795983
+    },
+    {
+      "case_id": "097",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0290547480493283
+    },
+    {
+      "case_id": "098",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025806450550483938
+    },
+    {
+      "case_id": "098",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025360178812778487
+    },
+    {
+      "case_id": "099",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02543184961972355
+    },
+    {
+      "case_id": "099",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022259819096111386
+    },
+    {
+      "case_id": "100",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025367479328369368
+    },
+    {
+      "case_id": "100",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02384832816904886
+    },
+    {
+      "case_id": "101",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03354227124352191
+    },
+    {
+      "case_id": "101",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.032792980537947755
+    },
+    {
+      "case_id": "102",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027039611865286996
+    },
+    {
+      "case_id": "102",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026281814334201275
+    },
+    {
+      "case_id": "103",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02754727186643027
+    },
+    {
+      "case_id": "103",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03023456811617973
+    },
+    {
+      "case_id": "104",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03229805716454533
+    },
+    {
+      "case_id": "104",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031658232200178424
+    },
+    {
+      "case_id": "105",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026278901834796458
+    },
+    {
+      "case_id": "105",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026880415013822392
+    },
+    {
+      "case_id": "106",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.021529848267128702
+    },
+    {
+      "case_id": "106",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.018583893423070767
+    },
+    {
+      "case_id": "107",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02944051846340757
+    },
+    {
+      "case_id": "107",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027479074465802195
+    },
+    {
+      "case_id": "108",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03081646820741966
+    },
+    {
+      "case_id": "108",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03087251558105651
+    },
+    {
+      "case_id": "109",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028831502588172266
+    },
+    {
+      "case_id": "109",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02725773269881532
+    },
+    {
+      "case_id": "110",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02480957860817992
+    },
+    {
+      "case_id": "110",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02817504132919318
+    },
+    {
+      "case_id": "111",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023596070140321848
+    },
+    {
+      "case_id": "111",
+      "phase": "ES",
+      "split": "test",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.023962060845923627
+    },
+    {
+      "case_id": "112",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02692753973387691
+    },
+    {
+      "case_id": "112",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02651167393077545
+    },
+    {
+      "case_id": "113",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025079739907831623
+    },
+    {
+      "case_id": "113",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025580950766912226
+    },
+    {
+      "case_id": "114",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024903514778205887
+    },
+    {
+      "case_id": "114",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024784001053741313
+    },
+    {
+      "case_id": "115",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028953525702905752
+    },
+    {
+      "case_id": "115",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029104070987202503
+    },
+    {
+      "case_id": "116",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02541378714553204
+    },
+    {
+      "case_id": "116",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027136117907978114
+    },
+    {
+      "case_id": "117",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026133644913396602
+    },
+    {
+      "case_id": "117",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02738351160580348
+    },
+    {
+      "case_id": "118",
+      "phase": "ED",
+      "split": "test",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.027563629583847338
+    },
+    {
+      "case_id": "118",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027394430910514456
+    },
+    {
+      "case_id": "119",
+      "phase": "ED",
+      "split": "val",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03147865635878187
+    },
+    {
+      "case_id": "119",
+      "phase": "ES",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030547442448003535
+    },
+    {
+      "case_id": "120",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028690944070067996
+    },
+    {
+      "case_id": "120",
+      "phase": "ES",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02770893589712331
+    },
+    {
+      "case_id": "121",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.028605079586155324
+    },
+    {
+      "case_id": "121",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026262154112183595
+    },
+    {
+      "case_id": "122",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025117636618176415
+    },
+    {
+      "case_id": "122",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023549746218772954
+    },
+    {
+      "case_id": "123",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.025833134642281548
+    },
+    {
+      "case_id": "123",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025956014228492575
+    },
+    {
+      "case_id": "124",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02331963362110047
+    },
+    {
+      "case_id": "124",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02346710461037535
+    },
+    {
+      "case_id": "125",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02427415927313208
+    },
+    {
+      "case_id": "125",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02536312567361261
+    },
+    {
+      "case_id": "126",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026092505887109527
+    },
+    {
+      "case_id": "126",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025032173325568664
+    },
+    {
+      "case_id": "127",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025709548351970053
+    },
+    {
+      "case_id": "127",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02540023734082018
+    },
+    {
+      "case_id": "128",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.028706915785774063
+    },
+    {
+      "case_id": "128",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028340226907063396
+    },
+    {
+      "case_id": "129",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027602605580146884
+    },
+    {
+      "case_id": "129",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024413343542666454
+    },
+    {
+      "case_id": "130",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022460602958816713
+    },
+    {
+      "case_id": "130",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023679578556259104
+    },
+    {
+      "case_id": "131",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02530208843968652
+    },
+    {
+      "case_id": "131",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025327560832720274
+    },
+    {
+      "case_id": "132",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026303563048803165
+    },
+    {
+      "case_id": "132",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023154495444650345
+    },
+    {
+      "case_id": "133",
+      "phase": "ED",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.028467179846879954
+    },
+    {
+      "case_id": "133",
+      "phase": "ES",
+      "split": "train",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.028845098412634513
+    },
+    {
+      "case_id": "134",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024792590326787663
+    },
+    {
+      "case_id": "134",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.019155640550582304
+    },
+    {
+      "case_id": "135",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026579387175592526
+    },
+    {
+      "case_id": "135",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025361846947235308
+    },
+    {
+      "case_id": "136",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02987899461389048
+    },
+    {
+      "case_id": "136",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028262210214693755
+    },
+    {
+      "case_id": "137",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02508481407438197
+    },
+    {
+      "case_id": "137",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02517722217112104
+    },
+    {
+      "case_id": "138",
+      "phase": "ED",
+      "split": "test",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.02999652512764111
+    },
+    {
+      "case_id": "138",
+      "phase": "ES",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03018508625804543
+    },
+    {
+      "case_id": "139",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.024957494526315707
+    },
+    {
+      "case_id": "139",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023876029227081562
+    },
+    {
+      "case_id": "140",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029305140753461512
+    },
+    {
+      "case_id": "140",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.021936770898399956
+    },
+    {
+      "case_id": "141",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02729408605329469
+    },
+    {
+      "case_id": "141",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026380537617872648
+    },
+    {
+      "case_id": "142",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02881525161275665
+    },
+    {
+      "case_id": "142",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.028756519098260113
+    },
+    {
+      "case_id": "143",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024327133900293108
+    },
+    {
+      "case_id": "143",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025411820986249972
+    },
+    {
+      "case_id": "144",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027762152450723894
+    },
+    {
+      "case_id": "144",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025807436864284404
+    },
+    {
+      "case_id": "145",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024190562580227778
+    },
+    {
+      "case_id": "145",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02239553539056355
+    },
+    {
+      "case_id": "146",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023977382610673927
+    },
+    {
+      "case_id": "146",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02324390652773281
+    },
+    {
+      "case_id": "147",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030340839601071864
+    },
+    {
+      "case_id": "147",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.028270192664874603
+    },
+    {
+      "case_id": "148",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.022811330726901773
+    },
+    {
+      "case_id": "148",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023029726290792234
+    },
+    {
+      "case_id": "149",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025069600632641534
+    },
+    {
+      "case_id": "149",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024368970403475243
+    },
+    {
+      "case_id": "150",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026891139206973075
+    },
+    {
+      "case_id": "150",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024149928580770738
+    },
+    {
+      "case_id": "151",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024667148022577117
+    },
+    {
+      "case_id": "151",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.021624190430502885
+    },
+    {
+      "case_id": "152",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029986780840391348
+    },
+    {
+      "case_id": "152",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02942883620034324
+    },
+    {
+      "case_id": "153",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031986862612124994
+    },
+    {
+      "case_id": "153",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030662527259915993
+    },
+    {
+      "case_id": "154",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024909640056170166
+    },
+    {
+      "case_id": "154",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.02370513748329671
+    },
+    {
+      "case_id": "155",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022979410761618555
+    },
+    {
+      "case_id": "155",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.017800654951738895
+    },
+    {
+      "case_id": "156",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027393643383705975
+    },
+    {
+      "case_id": "156",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02603966792091875
+    },
+    {
+      "case_id": "157",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.025047349154791013
+    },
+    {
+      "case_id": "157",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025392197635080885
+    },
+    {
+      "case_id": "158",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02618048954327775
+    },
+    {
+      "case_id": "158",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.026051175226147045
+    },
+    {
+      "case_id": "159",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025320612733248597
+    },
+    {
+      "case_id": "159",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024091084792477215
+    },
+    {
+      "case_id": "160",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02366977321184545
+    },
+    {
+      "case_id": "160",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02349940636856222
+    },
+    {
+      "case_id": "161",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02440072783397079
+    },
+    {
+      "case_id": "161",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.023226703260362407
+    },
+    {
+      "case_id": "162",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.026582967047179818
+    },
+    {
+      "case_id": "162",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027217125569331493
+    },
+    {
+      "case_id": "163",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028441726854865512
+    },
+    {
+      "case_id": "163",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02808092146721062
+    },
+    {
+      "case_id": "164",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024699885458299396
+    },
+    {
+      "case_id": "164",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025289174771010614
+    },
+    {
+      "case_id": "165",
+      "phase": "ED",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.019024535677846656
+    },
+    {
+      "case_id": "165",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.018430495829452418
+    },
+    {
+      "case_id": "166",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026654771130134678
+    },
+    {
+      "case_id": "166",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025886604064193137
+    },
+    {
+      "case_id": "167",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02830777797979907
+    },
+    {
+      "case_id": "167",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02584196355276659
+    },
+    {
+      "case_id": "168",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.0287244466644801
+    },
+    {
+      "case_id": "168",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02867092444716865
+    },
+    {
+      "case_id": "169",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03196220545709605
+    },
+    {
+      "case_id": "169",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029396417376035686
+    },
+    {
+      "case_id": "170",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025408235353084046
+    },
+    {
+      "case_id": "170",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0231646117338726
+    },
+    {
+      "case_id": "171",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023281376896701112
+    },
+    {
+      "case_id": "171",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022779532754890194
+    },
+    {
+      "case_id": "172",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025407633290629485
+    },
+    {
+      "case_id": "172",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024630784102975308
+    },
+    {
+      "case_id": "173",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02480523595937275
+    },
+    {
+      "case_id": "173",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023783747548150446
+    },
+    {
+      "case_id": "174",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02379275715822721
+    },
+    {
+      "case_id": "174",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.01935506720285479
+    },
+    {
+      "case_id": "175",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028448047553573545
+    },
+    {
+      "case_id": "175",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.029248450840528517
+    },
+    {
+      "case_id": "176",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02923511693589482
+    },
+    {
+      "case_id": "176",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028697183983514524
+    },
+    {
+      "case_id": "177",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02852651897391304
+    },
+    {
+      "case_id": "177",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03092340624055431
+    },
+    {
+      "case_id": "178",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02856200001776151
+    },
+    {
+      "case_id": "178",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024783524120966474
+    },
+    {
+      "case_id": "179",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025298367256283975
+    },
+    {
+      "case_id": "179",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026248876243359805
+    },
+    {
+      "case_id": "180",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029883005131546743
+    },
+    {
+      "case_id": "180",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.030785187014503657
+    },
+    {
+      "case_id": "181",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025039943002991966
+    },
+    {
+      "case_id": "181",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024515693836332904
+    },
+    {
+      "case_id": "182",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027199059194129557
+    },
+    {
+      "case_id": "182",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02580080081951658
+    },
+    {
+      "case_id": "183",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025414423275639596
+    },
+    {
+      "case_id": "183",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023467960157665224
+    },
+    {
+      "case_id": "184",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.023802906566220305
+    },
+    {
+      "case_id": "184",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022698144973436613
+    },
+    {
+      "case_id": "185",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026376791416019202
+    },
+    {
+      "case_id": "185",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025239695140734528
+    },
+    {
+      "case_id": "186",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026180670242896765
+    },
+    {
+      "case_id": "186",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02003104738648086
+    },
+    {
+      "case_id": "187",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025745552505104075
+    },
+    {
+      "case_id": "187",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.0250806612069223
+    },
+    {
+      "case_id": "189",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027025540317668913
+    },
+    {
+      "case_id": "189",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023670040171433822
+    },
+    {
+      "case_id": "190",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026164448513923102
+    },
+    {
+      "case_id": "190",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02352951867291221
+    },
+    {
+      "case_id": "191",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02788839413183808
+    },
+    {
+      "case_id": "191",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.024809189425551933
+    },
+    {
+      "case_id": "192",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02405542286880982
+    },
+    {
+      "case_id": "192",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.021826537527812422
+    },
+    {
+      "case_id": "193",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027933290636145015
+    },
+    {
+      "case_id": "193",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02722146808153474
+    },
+    {
+      "case_id": "194",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.029761015282890303
+    },
+    {
+      "case_id": "194",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030823723358155867
+    },
+    {
+      "case_id": "195",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031279875362284736
+    },
+    {
+      "case_id": "195",
+      "phase": "ES",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02959398029972592
+    },
+    {
+      "case_id": "196",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025145156880049212
+    },
+    {
+      "case_id": "196",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.0237802574439165
+    },
+    {
+      "case_id": "197",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027102265605415427
+    },
+    {
+      "case_id": "197",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024259854703680177
+    },
+    {
+      "case_id": "198",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02651911652766194
+    },
+    {
+      "case_id": "198",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026009748800653605
+    },
+    {
+      "case_id": "199",
+      "phase": "ED",
+      "split": "train",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.027651180950057194
+    },
+    {
+      "case_id": "199",
+      "phase": "ES",
+      "split": "train",
+      "planes": 4,
+      "max_quantization_plane_residual_mm": 0.0263659993680439
+    },
+    {
+      "case_id": "200",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02798835561204674
+    },
+    {
+      "case_id": "200",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028848124481379318
+    },
+    {
+      "case_id": "201",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025030530539524944
+    },
+    {
+      "case_id": "201",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025795607163327454
+    },
+    {
+      "case_id": "202",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.026197490233068176
+    },
+    {
+      "case_id": "202",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027066306275826894
+    },
+    {
+      "case_id": "203",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026153321190353154
+    },
+    {
+      "case_id": "203",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02467314326976009
+    },
+    {
+      "case_id": "204",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028112373769900043
+    },
+    {
+      "case_id": "204",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026913627587361478
+    },
+    {
+      "case_id": "205",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02375852905934593
+    },
+    {
+      "case_id": "205",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023391408937556823
+    },
+    {
+      "case_id": "206",
+      "phase": "ED",
+      "split": "test",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029000662009978372
+    },
+    {
+      "case_id": "206",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02949709126551715
+    },
+    {
+      "case_id": "207",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03331451056634292
+    },
+    {
+      "case_id": "207",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03254812291107662
+    },
+    {
+      "case_id": "208",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024370031244763415
+    },
+    {
+      "case_id": "208",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024747421829154074
+    },
+    {
+      "case_id": "209",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026162964914937803
+    },
+    {
+      "case_id": "209",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025510271314492912
+    },
+    {
+      "case_id": "210",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02823175385405779
+    },
+    {
+      "case_id": "210",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027747993611986706
+    },
+    {
+      "case_id": "211",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02335622371961806
+    },
+    {
+      "case_id": "211",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.02162386173135623
+    },
+    {
+      "case_id": "212",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.032582847517861294
+    },
+    {
+      "case_id": "212",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0286930074751978
+    },
+    {
+      "case_id": "213",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025990570278361352
+    },
+    {
+      "case_id": "213",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02647136413400075
+    },
+    {
+      "case_id": "214",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025424251729102492
+    },
+    {
+      "case_id": "214",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026235770718782605
+    },
+    {
+      "case_id": "215",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02623967970136529
+    },
+    {
+      "case_id": "215",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02653986993073464
+    },
+    {
+      "case_id": "216",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03021547460914366
+    },
+    {
+      "case_id": "216",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025353146353687836
+    },
+    {
+      "case_id": "217",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027053518180788702
+    },
+    {
+      "case_id": "217",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025524658500835455
+    },
+    {
+      "case_id": "218",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028124082219049502
+    },
+    {
+      "case_id": "218",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029393639970682665
+    },
+    {
+      "case_id": "219",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03128027097707417
+    },
+    {
+      "case_id": "219",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02906064652240669
+    },
+    {
+      "case_id": "220",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029729351202866326
+    },
+    {
+      "case_id": "220",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02859706547032302
+    },
+    {
+      "case_id": "221",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024350484227052556
+    },
+    {
+      "case_id": "221",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024401839272038022
+    },
+    {
+      "case_id": "222",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02644504046416792
+    },
+    {
+      "case_id": "222",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02755236344866845
+    },
+    {
+      "case_id": "223",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02616580024714961
+    },
+    {
+      "case_id": "223",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02785315273623813
+    },
+    {
+      "case_id": "224",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02834965871791422
+    },
+    {
+      "case_id": "224",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026166577963416978
+    },
+    {
+      "case_id": "225",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024835947346335922
+    },
+    {
+      "case_id": "225",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024530052911967627
+    },
+    {
+      "case_id": "226",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030463246326895285
+    },
+    {
+      "case_id": "226",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028827628816398408
+    },
+    {
+      "case_id": "227",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02844961706415807
+    },
+    {
+      "case_id": "227",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026932426421502228
+    },
+    {
+      "case_id": "228",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023417591881123346
+    },
+    {
+      "case_id": "228",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022180945961428635
+    },
+    {
+      "case_id": "229",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02814356377698408
+    },
+    {
+      "case_id": "229",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02531126992557556
+    },
+    {
+      "case_id": "230",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026839778310616944
+    },
+    {
+      "case_id": "230",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026976534186530194
+    },
+    {
+      "case_id": "231",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03302673831750283
+    },
+    {
+      "case_id": "231",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03212486065935514
+    },
+    {
+      "case_id": "232",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02915076309178307
+    },
+    {
+      "case_id": "232",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026941373321058143
+    },
+    {
+      "case_id": "233",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029177983125306332
+    },
+    {
+      "case_id": "233",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028809371033300814
+    },
+    {
+      "case_id": "234",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02781525978366949
+    },
+    {
+      "case_id": "234",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02697704078613052
+    },
+    {
+      "case_id": "235",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.034657949721958806
+    },
+    {
+      "case_id": "235",
+      "phase": "ES",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.033363898535664516
+    },
+    {
+      "case_id": "236",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027463795189107573
+    },
+    {
+      "case_id": "236",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026800142971771614
+    },
+    {
+      "case_id": "237",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027771783180654534
+    },
+    {
+      "case_id": "237",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02513008418578575
+    },
+    {
+      "case_id": "238",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.034028047122539526
+    },
+    {
+      "case_id": "238",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030242968379424924
+    },
+    {
+      "case_id": "239",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029795828319526572
+    },
+    {
+      "case_id": "239",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02933501240000949
+    },
+    {
+      "case_id": "240",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03343261919746541
+    },
+    {
+      "case_id": "240",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03184092551213914
+    },
+    {
+      "case_id": "241",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03377058099852107
+    },
+    {
+      "case_id": "241",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03166181067784253
+    },
+    {
+      "case_id": "242",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.027345336295209657
+    },
+    {
+      "case_id": "242",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027737561898577692
+    },
+    {
+      "case_id": "243",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029814305205353324
+    },
+    {
+      "case_id": "243",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02970410707912904
+    },
+    {
+      "case_id": "244",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.024086171949332633
+    },
+    {
+      "case_id": "244",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0237354185145256
+    },
+    {
+      "case_id": "245",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.032239837170012976
+    },
+    {
+      "case_id": "245",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.032722734911803615
+    },
+    {
+      "case_id": "246",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028177980191153577
+    },
+    {
+      "case_id": "246",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027206242472619862
+    },
+    {
+      "case_id": "247",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03116092679669351
+    },
+    {
+      "case_id": "247",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.031039787353575782
+    },
+    {
+      "case_id": "248",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026560017252031838
+    },
+    {
+      "case_id": "248",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.027072466874959736
+    },
+    {
+      "case_id": "249",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027605830855956304
+    },
+    {
+      "case_id": "249",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02661690540515631
+    },
+    {
+      "case_id": "250",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02914465150327625
+    },
+    {
+      "case_id": "250",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.031012827278091955
+    },
+    {
+      "case_id": "251",
+      "phase": "ED",
+      "split": "test",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.029155344464667405
+    },
+    {
+      "case_id": "251",
+      "phase": "ES",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028667479321226003
+    },
+    {
+      "case_id": "252",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02992616783581374
+    },
+    {
+      "case_id": "252",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028959301117243763
+    },
+    {
+      "case_id": "253",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03147962555160236
+    },
+    {
+      "case_id": "253",
+      "phase": "ES",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03150158101215484
+    },
+    {
+      "case_id": "254",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02608732744144991
+    },
+    {
+      "case_id": "254",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025896987483584506
+    },
+    {
+      "case_id": "255",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030199158847886102
+    },
+    {
+      "case_id": "255",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029789366103798176
+    },
+    {
+      "case_id": "256",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029435003997325793
+    },
+    {
+      "case_id": "256",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02847166278227219
+    },
+    {
+      "case_id": "257",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028061266896610964
+    },
+    {
+      "case_id": "257",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023253565609914695
+    },
+    {
+      "case_id": "258",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026552189127094908
+    },
+    {
+      "case_id": "258",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.018563905902058662
+    },
+    {
+      "case_id": "259",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028691656287995446
+    },
+    {
+      "case_id": "259",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028279097522869678
+    },
+    {
+      "case_id": "260",
+      "phase": "ED",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.021682158051103052
+    },
+    {
+      "case_id": "260",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022793458536069313
+    },
+    {
+      "case_id": "261",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.021902291670197995
+    },
+    {
+      "case_id": "261",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.022357358860746926
+    },
+    {
+      "case_id": "262",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02927971525902437
+    },
+    {
+      "case_id": "262",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0275463182780102
+    },
+    {
+      "case_id": "263",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030983759031941314
+    },
+    {
+      "case_id": "263",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03163035475168447
+    },
+    {
+      "case_id": "264",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025198839840306065
+    },
+    {
+      "case_id": "264",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02436010459358197
+    },
+    {
+      "case_id": "265",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02530230481317864
+    },
+    {
+      "case_id": "265",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02540519824560223
+    },
+    {
+      "case_id": "266",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029020873696964183
+    },
+    {
+      "case_id": "266",
+      "phase": "ES",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026690005031369517
+    },
+    {
+      "case_id": "267",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024414669266777315
+    },
+    {
+      "case_id": "267",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024519390320785758
+    },
+    {
+      "case_id": "268",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02826149697150657
+    },
+    {
+      "case_id": "268",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02876500208965408
+    },
+    {
+      "case_id": "269",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024866292501205988
+    },
+    {
+      "case_id": "269",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025745464868785907
+    },
+    {
+      "case_id": "270",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026001434014926383
+    },
+    {
+      "case_id": "270",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024450782429051073
+    },
+    {
+      "case_id": "271",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.031323220866999214
+    },
+    {
+      "case_id": "271",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030205334583097453
+    },
+    {
+      "case_id": "272",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026493721051002967
+    },
+    {
+      "case_id": "272",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025367337117949917
+    },
+    {
+      "case_id": "273",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0248257955550306
+    },
+    {
+      "case_id": "273",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02589745050843886
+    },
+    {
+      "case_id": "274",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029158119606841247
+    },
+    {
+      "case_id": "274",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028438879686566592
+    },
+    {
+      "case_id": "275",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027858570085835626
+    },
+    {
+      "case_id": "275",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027009650154407937
+    },
+    {
+      "case_id": "276",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025428976220040925
+    },
+    {
+      "case_id": "276",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025009229374658593
+    },
+    {
+      "case_id": "277",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026632236461917664
+    },
+    {
+      "case_id": "277",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02764141949318258
+    },
+    {
+      "case_id": "278",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03326869460648847
+    },
+    {
+      "case_id": "278",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030343941533965954
+    },
+    {
+      "case_id": "279",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03461737238031391
+    },
+    {
+      "case_id": "279",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03277878543420203
+    },
+    {
+      "case_id": "280",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02918544580230825
+    },
+    {
+      "case_id": "280",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029643121012045758
+    },
+    {
+      "case_id": "281",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02374666802380194
+    },
+    {
+      "case_id": "281",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.01938188977855005
+    },
+    {
+      "case_id": "282",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02329357855100987
+    },
+    {
+      "case_id": "282",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022996717674413112
+    },
+    {
+      "case_id": "283",
+      "phase": "ED",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.03202982932049137
+    },
+    {
+      "case_id": "283",
+      "phase": "ES",
+      "split": "train",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.030534418113088678
+    },
+    {
+      "case_id": "284",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.032088425892632916
+    },
+    {
+      "case_id": "284",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03093416430436217
+    },
+    {
+      "case_id": "285",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025718903637612315
+    },
+    {
+      "case_id": "285",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02488676618899913
+    },
+    {
+      "case_id": "286",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02719396030119271
+    },
+    {
+      "case_id": "286",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027847645141167537
+    },
+    {
+      "case_id": "287",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029546589967105272
+    },
+    {
+      "case_id": "287",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025161489941621065
+    },
+    {
+      "case_id": "288",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02972635823634227
+    },
+    {
+      "case_id": "288",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030135992005060758
+    },
+    {
+      "case_id": "289",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02392704763473115
+    },
+    {
+      "case_id": "289",
+      "phase": "ES",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.0246160848387308
+    },
+    {
+      "case_id": "290",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026736954332376304
+    },
+    {
+      "case_id": "290",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.027040677476553625
+    },
+    {
+      "case_id": "291",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025130759197622164
+    },
+    {
+      "case_id": "291",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026357588088602425
+    },
+    {
+      "case_id": "292",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025386024527081105
+    },
+    {
+      "case_id": "292",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026279251388075932
+    },
+    {
+      "case_id": "293",
+      "phase": "ED",
+      "split": "test",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029371096488778708
+    },
+    {
+      "case_id": "293",
+      "phase": "ES",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028459483846204524
+    },
+    {
+      "case_id": "294",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026069767459595005
+    },
+    {
+      "case_id": "294",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026040361643477027
+    },
+    {
+      "case_id": "295",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02871952350772643
+    },
+    {
+      "case_id": "295",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027014538870644
+    },
+    {
+      "case_id": "296",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028474440340481227
+    },
+    {
+      "case_id": "296",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02458127578103952
+    },
+    {
+      "case_id": "297",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026454583060684825
+    },
+    {
+      "case_id": "297",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025635739329881495
+    },
+    {
+      "case_id": "298",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025250365455932577
+    },
+    {
+      "case_id": "298",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026213561412463733
+    },
+    {
+      "case_id": "299",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028733663997722543
+    },
+    {
+      "case_id": "299",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028534144122637307
+    },
+    {
+      "case_id": "300",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.0260322131806141
+    },
+    {
+      "case_id": "300",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02480171363052221
+    },
+    {
+      "case_id": "301",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023630930180663517
+    },
+    {
+      "case_id": "301",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022388052006809198
+    },
+    {
+      "case_id": "302",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02506545113392064
+    },
+    {
+      "case_id": "302",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023854932739453223
+    },
+    {
+      "case_id": "303",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.018185748815284678
+    },
+    {
+      "case_id": "303",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.018140115851198988
+    },
+    {
+      "case_id": "304",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02992690356322676
+    },
+    {
+      "case_id": "304",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02713253853857157
+    },
+    {
+      "case_id": "305",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028280746406539894
+    },
+    {
+      "case_id": "305",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027198461161274223
+    },
+    {
+      "case_id": "306",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.026662865691945925
+    },
+    {
+      "case_id": "306",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025684824049829927
+    },
+    {
+      "case_id": "307",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025280001634520117
+    },
+    {
+      "case_id": "307",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02455664367293158
+    },
+    {
+      "case_id": "308",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025322712739803962
+    },
+    {
+      "case_id": "308",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.024260359358005707
+    },
+    {
+      "case_id": "309",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027059226383629943
+    },
+    {
+      "case_id": "309",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026906523797239422
+    },
+    {
+      "case_id": "310",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.023094479762672534
+    },
+    {
+      "case_id": "310",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022155871757958738
+    },
+    {
+      "case_id": "311",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03127746616380615
+    },
+    {
+      "case_id": "311",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.032230972427018514
+    },
+    {
+      "case_id": "312",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029883378820937747
+    },
+    {
+      "case_id": "312",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029897685430225442
+    },
+    {
+      "case_id": "313",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02910325860594443
+    },
+    {
+      "case_id": "313",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029144010581827473
+    },
+    {
+      "case_id": "314",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.023737900119513277
+    },
+    {
+      "case_id": "314",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024062939546220945
+    },
+    {
+      "case_id": "315",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.02807180173215058
+    },
+    {
+      "case_id": "315",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02972841000096425
+    },
+    {
+      "case_id": "316",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.03153360732349297
+    },
+    {
+      "case_id": "316",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.032620760298238266
+    },
+    {
+      "case_id": "317",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029656272651793686
+    },
+    {
+      "case_id": "317",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027573998411657644
+    },
+    {
+      "case_id": "318",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029453465127763347
+    },
+    {
+      "case_id": "318",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025592188522773483
+    },
+    {
+      "case_id": "319",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030516446717989455
+    },
+    {
+      "case_id": "319",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.03128785386527051
+    },
+    {
+      "case_id": "320",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02958144914100871
+    },
+    {
+      "case_id": "320",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03047916837179241
+    },
+    {
+      "case_id": "321",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027963434157053654
+    },
+    {
+      "case_id": "321",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.026898713293606158
+    },
+    {
+      "case_id": "322",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.029112151830334127
+    },
+    {
+      "case_id": "322",
+      "phase": "ES",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027108687337853647
+    },
+    {
+      "case_id": "323",
+      "phase": "ED",
+      "split": "test",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030888918173237478
+    },
+    {
+      "case_id": "323",
+      "phase": "ES",
+      "split": "test",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03240295856839935
+    },
+    {
+      "case_id": "324",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028742280286640994
+    },
+    {
+      "case_id": "324",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.030170063426729433
+    },
+    {
+      "case_id": "325",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02915776697166291
+    },
+    {
+      "case_id": "325",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.028133755735090367
+    },
+    {
+      "case_id": "326",
+      "phase": "ED",
+      "split": "val",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.032200385118268435
+    },
+    {
+      "case_id": "326",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02880748738497266
+    },
+    {
+      "case_id": "327",
+      "phase": "ED",
+      "split": "val",
+      "planes": 18,
+      "max_quantization_plane_residual_mm": 0.027987138492600375
+    },
+    {
+      "case_id": "327",
+      "phase": "ES",
+      "split": "val",
+      "planes": 16,
+      "max_quantization_plane_residual_mm": 0.02703432672347717
+    },
+    {
+      "case_id": "328",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.027983515704702804
+    },
+    {
+      "case_id": "328",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.021359549312333345
+    },
+    {
+      "case_id": "329",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025326824258061355
+    },
+    {
+      "case_id": "329",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023555032698265945
+    },
+    {
+      "case_id": "330",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02842183092456957
+    },
+    {
+      "case_id": "330",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.027006385715638747
+    },
+    {
+      "case_id": "331",
+      "phase": "ED",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02826267572532724
+    },
+    {
+      "case_id": "331",
+      "phase": "ES",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022558879684727983
+    },
+    {
+      "case_id": "332",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030811939174716852
+    },
+    {
+      "case_id": "332",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.030107908078127934
+    },
+    {
+      "case_id": "333",
+      "phase": "ED",
+      "split": "train",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.029568048271628133
+    },
+    {
+      "case_id": "333",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.028743609394155923
+    },
+    {
+      "case_id": "334",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024344188649230335
+    },
+    {
+      "case_id": "334",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.024785686202161133
+    },
+    {
+      "case_id": "335",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.028446868293387367
+    },
+    {
+      "case_id": "335",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02650497838198706
+    },
+    {
+      "case_id": "336",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.031156617172456245
+    },
+    {
+      "case_id": "336",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03180331167292378
+    },
+    {
+      "case_id": "337",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.02908777277269821
+    },
+    {
+      "case_id": "337",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.0290348848477479
+    },
+    {
+      "case_id": "338",
+      "phase": "ED",
+      "split": "val",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.024300772621790537
+    },
+    {
+      "case_id": "338",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02513341972558052
+    },
+    {
+      "case_id": "339",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.026121282071874516
+    },
+    {
+      "case_id": "339",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023876478544319076
+    },
+    {
+      "case_id": "340",
+      "phase": "ED",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.020922034131966916
+    },
+    {
+      "case_id": "340",
+      "phase": "ES",
+      "split": "test",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.021883891007598112
+    },
+    {
+      "case_id": "341",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02568117204090744
+    },
+    {
+      "case_id": "341",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.025168247431717337
+    },
+    {
+      "case_id": "342",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029702115958048572
+    },
+    {
+      "case_id": "342",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02943319615667274
+    },
+    {
+      "case_id": "343",
+      "phase": "ED",
+      "split": "test",
+      "planes": 12,
+      "max_quantization_plane_residual_mm": 0.032657346386304846
+    },
+    {
+      "case_id": "343",
+      "phase": "ES",
+      "split": "test",
+      "planes": 11,
+      "max_quantization_plane_residual_mm": 0.02823463953159176
+    },
+    {
+      "case_id": "344",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025991736702158912
+    },
+    {
+      "case_id": "344",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025539396147599626
+    },
+    {
+      "case_id": "345",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02455823677087225
+    },
+    {
+      "case_id": "345",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.023778371331802918
+    },
+    {
+      "case_id": "346",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.024557060361826998
+    },
+    {
+      "case_id": "346",
+      "phase": "ES",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.025449072136611316
+    },
+    {
+      "case_id": "347",
+      "phase": "ED",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02575086999410942
+    },
+    {
+      "case_id": "347",
+      "phase": "ES",
+      "split": "val",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02643014772752702
+    },
+    {
+      "case_id": "348",
+      "phase": "ED",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.03104187628338314
+    },
+    {
+      "case_id": "348",
+      "phase": "ES",
+      "split": "train",
+      "planes": 10,
+      "max_quantization_plane_residual_mm": 0.030846684692529883
+    },
+    {
+      "case_id": "349",
+      "phase": "ED",
+      "split": "val",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02651989296570508
+    },
+    {
+      "case_id": "349",
+      "phase": "ES",
+      "split": "val",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.02607043802881369
+    },
+    {
+      "case_id": "350",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.029302516208154536
+    },
+    {
+      "case_id": "350",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.029047383169004064
+    },
+    {
+      "case_id": "351",
+      "phase": "ED",
+      "split": "train",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.02780083223879773
+    },
+    {
+      "case_id": "351",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.026145142237928087
+    },
+    {
+      "case_id": "352",
+      "phase": "ED",
+      "split": "test",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.025592448035997344
+    },
+    {
+      "case_id": "352",
+      "phase": "ES",
+      "split": "test",
+      "planes": 8,
+      "max_quantization_plane_residual_mm": 0.0254229874135266
+    },
+    {
+      "case_id": "353",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.023370948442141236
+    },
+    {
+      "case_id": "353",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.01776154407902016
+    },
+    {
+      "case_id": "354",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02851952046285735
+    },
+    {
+      "case_id": "354",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02743483327003
+    },
+    {
+      "case_id": "355",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.022050475525474917
+    },
+    {
+      "case_id": "355",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.021354994909629294
+    },
+    {
+      "case_id": "356",
+      "phase": "ED",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02046305450151919
+    },
+    {
+      "case_id": "356",
+      "phase": "ES",
+      "split": "train",
+      "planes": 6,
+      "max_quantization_plane_residual_mm": 0.022724304029877226
+    },
+    {
+      "case_id": "357",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.02903534037436637
+    },
+    {
+      "case_id": "357",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02225539122685177
+    },
+    {
+      "case_id": "358",
+      "phase": "ED",
+      "split": "test",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.021170814119799205
+    },
+    {
+      "case_id": "358",
+      "phase": "ES",
+      "split": "test",
+      "planes": 5,
+      "max_quantization_plane_residual_mm": 0.013353784886487656
+    },
+    {
+      "case_id": "359",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.03101923265265684
+    },
+    {
+      "case_id": "359",
+      "phase": "ES",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.029972854360330883
+    },
+    {
+      "case_id": "360",
+      "phase": "ED",
+      "split": "train",
+      "planes": 9,
+      "max_quantization_plane_residual_mm": 0.0233929686360174
+    },
+    {
+      "case_id": "360",
+      "phase": "ES",
+      "split": "train",
+      "planes": 7,
+      "max_quantization_plane_residual_mm": 0.02252999103470711
+    }
+  ]
+}

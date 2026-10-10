@@ -1,0 +1,47 @@
+[
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/training.py",
+    "snapshot": "runtime/core/training.py",
+    "sha256": "785e3629ec66e0e4d30dd52954b16586e4ce8ebbc2aba9aae40b61b0f568020c"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/model.py",
+    "snapshot": "runtime/core/model.py",
+    "sha256": "0e411167b1b8967d6a97b1f3580764486bf9adfdcbd92d85f5934b692ad6e767"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/data.py",
+    "snapshot": "runtime/core/data.py",
+    "sha256": "6b20af57e7faaef59a4a43f328433533deb7bb13e923baddfb4685a96d17594b"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/initialization.py",
+    "snapshot": "runtime/core/initialization.py",
+    "sha256": "32759b5faab21164f33005586c5270c4e5b085fe745c87ea4546952007e07003"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/__init__.py",
+    "snapshot": "runtime/core/__init__.py",
+    "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/mesh.py",
+    "snapshot": "runtime/core/mesh.py",
+    "sha256": "d848731bd608ee4cf65b330d5683567638f1a3750d132fc3c4332342f68f6cf9"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/losses.py",
+    "snapshot": "runtime/core/losses.py",
+    "sha256": "54a7f60aeaa54a7878e1d41579b97fff7c34c127ed609bb4e42defcc98b26bdb"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/core/evaluation.py",
+    "snapshot": "runtime/core/evaluation.py",
+    "sha256": "5cbfe13b8531cc17dc3ca7216de8cbd650a3d6c8542dafe6fc1029c04c9cb172"
+  },
+  {
+    "source": "/gpfs/work/aac/haoyuwu24/Heart_Reconstruction/PlaneLatentSDF/vendor/static_metrics.py",
+    "snapshot": "runtime/vendor/static_metrics.py",
+    "sha256": "12f3afb61212b76d35d4607922792bda052bc721c28ec808d432a1a7ec6c5b0e"
+  }
+]

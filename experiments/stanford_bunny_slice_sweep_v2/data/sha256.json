@@ -1,0 +1,7 @@
+{
+  "slices_025/data/bunny_observed.npz": "6ccc9e9cfe52f40960c5abfd4d1f6647ecb677fc517817576f9cac69bec0572b",
+  "slices_075/data/bunny_observed.npz": "de420c2eb8f55015d9d1ae665b801f1e287a85e16ebec6df18b07e392aa6e14d",
+  "slices_050/data/bunny_observed.npz": "a10b41d6d9fb25ef158452402bd01fb9a6ea92e0202b47372a298a95b0e68b3d",
+  "slices_016/data/bunny_observed.npz": "4f6fc893075fb5f2e0786aba6eace5bca50763fa0833f8dd7e78576891a6bfa4",
+  "data/heldout_contours.json": "921d2a075251264871a1e39154a0329191d38c7631458562034a18fb685c5595"
+}
