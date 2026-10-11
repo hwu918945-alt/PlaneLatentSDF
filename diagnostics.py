@@ -38,13 +38,18 @@ def main():
     if hashlib.sha256(Path(a.case).read_bytes()).hexdigest()!=ck['records'][0]['source_sha256']:
         raise ValueError('Cache fingerprint changed')
     c=load_case(a.case,a.device,ck['records'][0]['observed'])
+    if 'sampling_pool' in ck:
+        from .area_pool import AreaSampler,digest
+        pool=ck['sampling_pool']
+        if digest(pool['path'])!=pool['sha256']: raise ValueError('Diagnostic pool hash changed')
+        c['_area_sampler']=AreaSampler(pool['path'],1911)
     cfg=ck['config']; model=AutoOccupancy(cfg['latent_dim'],cfg['width']).to(a.device).eval()
     model.load_state_dict(ck['model']); code=ck['codes'][0].to(a.device).requires_grad_()
     u=model.plane_latents(code,c['s'],c['phase']); ul=loo(c['s'],u)
     groups={'code':[code],'generator':list(model.generator.parameters()),'decoder':list(model.decoder.parameters())}
     params=sum(groups.values(),[]); direct=[]; leaveout=[]; fallbacks=0
     for i in range(len(c['s'])):
-        q,y,f=sample_plane(c,i,cfg['points']); fallbacks+=f
+        q,y,f=sample_plane(c,i,min(cfg['points'],4096)); fallbacks+=f
         direct.append(F.binary_cross_entropy_with_logits(model.decoder(q,u[i].expand(len(q),-1),c['phase']),y))
         if 0<i<len(c['s'])-1:
             leaveout.append(F.binary_cross_entropy_with_logits(model.decoder(q,ul[i-1].expand(len(q),-1),c['phase']),y))
@@ -57,6 +62,7 @@ def main():
             selected=gs[offset:offset+len(ps)]; offset+=len(ps)
             grads[name][group]=float(torch.sqrt(sum((g.square().sum() for g in selected if g is not None),torch.tensor(0.,device=a.device))))
     report=dict(step=ck['step'],observed_indices=c['observed'],hidden_labels_used=False,
+                diagnostic_points_per_plane=min(cfg['points'],4096),sampling_pool=ck.get('sampling_pool'),
                 sampled_bce={k:float(v.detach()) for k,v in losses.items()},
                 unweighted_gradient_norm=grads,pool_fallbacks=fallbacks,
                 adjacent_latent_distances=(u[1:]-u[:-1]).norm(dim=-1).detach().cpu().tolist(),
@@ -80,6 +86,15 @@ def main():
             lv=query(model,q,c,v)
             row['latent_sensitivity'][name]=dict(mean_absolute_logit_change=float(np.abs(lv-logits).mean()),
                                                classification_change=float(np.mean((lv>=0)!=pred)))
+        with torch.no_grad():
+            code_variants={'zero_case_code':torch.zeros_like(code)}
+            for k in range(3): code_variants[f'random_case_code_{k}']=torch.randn_like(code)*.01
+            for name,variant in code_variants.items():
+                latent=model.plane_latents(variant,c['s'],c['phase'])
+                lv=query(model,q,c,latent)
+                row['latent_sensitivity'][name]=dict(mean_absolute_logit_change=float(np.abs(lv-logits).mean()),
+                                                   classification_change=float(np.mean((lv>=0)!=pred)))
+        row['other_case_code_available']=False
         images=[image]; labels=['Direct']
         if 0<i<len(c['s'])-1:
             with torch.no_grad():

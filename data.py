@@ -49,6 +49,10 @@ def load_case(path, device='cpu', observed=None):
 
 def sample_plane(c, i, count):
     if count < 4 or count % 4: raise ValueError('points must be divisible by 4')
+    if '_area_sampler' in c:
+        q,y=c['_area_sampler'].draw(i,count)
+        device=c['axis'].device
+        return torch.as_tensor(q,device=device),torch.as_tensor(y,device=device),0
     ids, fallbacks = [], 0
     for region, budget in ((0,count//2),(1,count//4),(2,count//4)):
         all_ids = torch.nonzero(c['region'][i] == region).flatten()
