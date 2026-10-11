@@ -89,3 +89,17 @@ runs/           本地缓存、冻结源码、权重、日志、网格和分析�
 本地已复制V1和V2完整运行结果到 `runs/plane_auto_occ_002_ED_20261011_v1/` 和 `runs/plane_auto_occ_repair_002_ED_20261011_v2/`，原文件保留。历史提交来源和校验记录见 [docs/MIGRATION.md](docs/MIGRATION.md)。这些历史runs不随Git克隆下发，真实缓存和权重不上传。
 
 V2完成2000步，观测/严格隐藏平均contour-proxy Dice分别0.8018/0.8018，已形成闭合环，仍有壁厚高估，尚未通过逐层0.90验收。执行成功不等于几何拟合或跨病例先验成功。当前修复训练路径为单病例；多病例面积池和独立code的Adam动量隔离未在本轮迁移中扩展。
+
+## 多病例心脏与25slice实体实验
+
+新增多病例训练入口 `python -m plane_auto_occ run-experiment --experiment /absolute/run --device cuda`。
+协议见 [docs/FULL_AND_SOLID_PROTOCOL.md](docs/FULL_AND_SOLID_PROTOCOL.md)：心脏采用患者级285/36/36划分、共享G/D和独立case/phase latent，先训练200epoch；验证/测试冻结G/D，用首/中/末层优化新code2000次，以其余层评估。验证选择checkpoint后运行测试。
+
+bunny及气球狗分别随机初始化，用全部25观测层拟合4000次，每1000次导出PNG/OBJ/checkpoint。保留多个独立轮廓与孔洞，使用实体内外balanced BCE；不读取三维参考网格做监督。两类实验共享同一G/D与Direct/LOO目标，使用独立Adam latent、按病例访问次数刷新面积池及可恢复Slurm部署。原`train`入口继续支持修复版单病例。
+
+```bash
+python -m plane_auto_occ test-population
+PYTHONPATH=. python scripts/prepare_requested_runs.py --source-root /absolute/compatible/cache-repo --repo-root .
+PYTHONPATH=. python scripts/freeze_experiment.py --experiment /absolute/run
+TASK_EXPERIMENT=/absolute/run sbatch scripts/experiment_job.sh
+```

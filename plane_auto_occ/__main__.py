@@ -9,7 +9,8 @@ COMMANDS = {
     'area-pool': 'area_pool', 'convert-cache': 'convert_cache',
     'make-synthetic': 'make_synthetic', 'audit-splits': 'audit_splits',
     'deploy': 'deployment', 'test': 'tests', 'test-repair': 'repair_tests',
-    'test-migration': 'migration_tests',
+    'test-migration': 'migration_tests', 'test-population': 'population_tests',
+    'run-experiment': 'run_experiment',
 }
 
 

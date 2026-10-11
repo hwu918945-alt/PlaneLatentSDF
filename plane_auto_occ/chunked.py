@@ -43,8 +43,8 @@ def backward_case(model,code,c,cfg,step):
         direct.append(dvalue)
         if interior: leaves.append(ovalue)
         dices.append((2*tp+1e-6)/(positive+targets+1e-6))
-        region_accuracy.append(dict(index=c['observed'][i],myocardium=float(correct[0]/budgets[0]),
-                                    cavity=float(correct[1]/budgets[1]),background=float(correct[2]/budgets[2])))
+        names=c.get('region_names',['myocardium','cavity','background'])
+        region_accuracy.append(dict(index=c['observed'][i],**{name:float(correct[r]/budgets[r]) for r,name in enumerate(names)}))
     # Exactly once per optimizer update, with the unchanged mean-square units.
     zloss=code.square().mean(); regularizer=cfg['latent_weight']*zloss
     regularizer.backward(); loss_value=total_value+float(regularizer.detach())

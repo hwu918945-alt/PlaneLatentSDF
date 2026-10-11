@@ -4,6 +4,11 @@ import torch
 
 
 def load_case(path, device='cpu', observed=None):
+    with np.load(path, allow_pickle=False) as header:
+        schema = str(header['schema_version']) if 'schema_version' in header else ''
+    if schema == 'plane_auto_occ_solid_v1':
+        from .solid import load_case as load_solid
+        return load_solid(path, device, observed)
     with np.load(path, allow_pickle=False) as f:
         required = ['q', 'occ', 'region', 'near', 'boundary', 'boundary_endo', 's', 'axis',
                     'center_mm', 'scale_mm', 'phase', 'case_id', 'schema_version']

@@ -27,7 +27,7 @@ def restore(checkpoint, case_path, device='cpu'):
 
 def bounds(obs, margin_mm=5):
     basis=stack_basis(obs['axis'].detach().cpu().numpy())
-    b=obs['boundary'].detach().cpu().numpy().reshape(-1,3) @ basis
+    b=obs.get('geometry_points',obs['boundary']).detach().cpu().numpy().reshape(-1,3) @ basis
     lower=b.min(0); upper=b.max(0)
     lower[:2]-=margin_mm/obs['scale_mm']; upper[:2]+=margin_mm/obs['scale_mm']
     lower[2]=float(obs['s'][0]); upper[2]=float(obs['s'][-1])
