@@ -1,0 +1,20 @@
+{
+  "latent_dim": 128,
+  "width": 256,
+  "points": 1024,
+  "steps": 2000,
+  "lr_shared": 0.001,
+  "lr_latent": 0.001,
+  "direct_weight": 0.5,
+  "loo_weight": 1.0,
+  "latent_weight": 0.0001,
+  "seam_weight": 0.0,
+  "seam_start": 500,
+  "seam_eps_mm": 0.1,
+  "seam_points": 64,
+  "clip_grad": 5.0,
+  "log_every": 50,
+  "save_every": 250,
+  "seed": 19,
+  "threads": 2
+}
