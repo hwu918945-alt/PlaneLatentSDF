@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "Case auto-decoder heart and solid occupancy with physical plane-latent interpolation"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = ["torch>=2.0", "numpy>=1.24", "scipy>=1.10", "scikit-image>=0.21", "matplotlib>=3.7", "shapely>=2.0", "trimesh>=4.0"]
+dependencies = ["torch>=2.0", "numpy>=1.24", "scipy>=1.10", "scikit-image>=0.21", "matplotlib>=3.7", "shapely>=2.0", "trimesh>=4.0", "numba>=0.59"]
 
 [project.scripts]
 plane-auto-occ = "plane_auto_occ.__main__:main"

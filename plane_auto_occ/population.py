@@ -100,6 +100,7 @@ def fit(paths,observed,cfg,output,device='cpu',steps=None,pretrained=None,resume
     keys=[(c['case_id'],c['phase']) for c in cases]
     if len(set(keys))!=len(keys) or any(len(c['s'])<3 for c in cases): raise ValueError('Duplicate key or fewer than three planes')
     manifest=[dict(path=c['path'],case_id=c['case_id'],phase=c['phase'],observed=c['observed'],source_sha256=digest(c['path'])) for c in cases]
+    for c,row in zip(cases,manifest):c['_source_sha256']=row['source_sha256']
     model=AutoOccupancy(cfg['latent_dim'],cfg['width']).to(device)
     prior=torch.load(pretrained,map_location='cpu',weights_only=False) if pretrained else None
     if prior:
@@ -111,7 +112,14 @@ def fit(paths,observed,cfg,output,device='cpu',steps=None,pretrained=None,resume
     groups=[dict(params=codes.parameters(),lr=cfg['lr_latent'])]
     if not prior: groups.append(dict(params=model.parameters(),lr=cfg['lr_shared']))
     opt=torch.optim.Adam(groups)
-    store=PoolStore(out/'sampling_pools',cfg)
+    fast=cfg.get('pipeline_backend')=='offline_batched_v1'
+    if fast:
+        from .offline_store import OfflinePoolStore
+        from .fast_chunked import backward_case as backward
+        store=OfflinePoolStore(cfg['offline_pool_root'],cfg,max_loaded=cfg.get('sampler_cache_cases',len(cases)))
+    else:
+        store=PoolStore(out/'sampling_pools',cfg);backward=backward_case
+    device_metadata=[{k:c[k].to(device) for k in ('s','axis')} for c in cases] if fast else None
     visits=[0]*len(cases); order=[]; completed=0
     train_keys=prior['training_keys'] if prior else [list(k) for k in keys]
     effective=dict(records=manifest,config=cfg,budget_steps=steps,mode='latent_only' if prior else 'joint',
@@ -157,41 +165,59 @@ def fit(paths,observed,cfg,output,device='cpu',steps=None,pretrained=None,resume
             try:
                 with torch.random.fork_rng(devices=devices): diagnose(0,out/'last.pt',cases)
             finally: np.random.set_state(nrng); random.setstate(prng)
-    with (out/'history.jsonl').open('a') as log:
-        while completed<steps:
-            if stop_requested and stop_requested(): save(); raise InterruptedError('Checkpoint saved for Slurm continuation')
-            start=time.perf_counter()
-            if not order: order=torch.randperm(len(cases)).tolist()
-            idx=order.pop(); source=cases[idx]; sampler=store.get(source,visits[idx])
-            c=dict(source)
-            for k in ('s','axis','boundary','boundary_endo'):
-                if k in c: c[k]=c[k].to(device)
-            c['_area_sampler']=sampler
-            opt.zero_grad(set_to_none=True)
-            if str(device).startswith('cuda'): torch.cuda.reset_peak_memory_stats()
-            loss,stats=backward_case(model,codes[idx],c,cfg,completed)
-            if not torch.isfinite(loss): raise FloatingPointError('Nonfinite complete-case loss')
-            params=[codes[idx]]+([] if prior else list(model.parameters()))
-            norm=torch.nn.utils.clip_grad_norm_(params,cfg['clip_grad'],error_if_nonfinite=True)
-            opt.step(); visits[idx]+=1; completed+=1
-            if str(device).startswith('cuda'): torch.cuda.synchronize()
-            row=dict(step=completed,epoch=completed/len(cases),case_id=c['case_id'],phase=c['phase'],case_updates=visits[idx],
-                loss=float(loss),gradient_norm=float(norm),pool_generation=sampler.meta['generation'],
-                update_seconds=time.perf_counter()-start,
-                peak_cuda_allocated_bytes=torch.cuda.max_memory_allocated() if str(device).startswith('cuda') else 0,**stats)
-            log.write(json.dumps(row)+'\n'); log.flush()
-            if completed==1 or completed%cfg['log_every']==0: print(json.dumps(row),flush=True)
-            if completed%cfg['save_every']==0 or completed in milestones or (on_epoch and completed%len(cases)==0): save()
-            if (completed in milestones and diagnose) or (completed%len(cases)==0 and on_epoch):
-                # Evaluation may seed its fresh latent fits; preserve every training RNG.
-                nrng=np.random.get_state(); prng=random.getstate()
-                devices=[torch.cuda.current_device()] if str(device).startswith('cuda') else []
-                try:
-                    with torch.random.fork_rng(devices=devices):
-                        if completed in milestones and diagnose: diagnose(completed,out/'last.pt',cases)
-                        if completed%len(cases)==0 and on_epoch: on_epoch(completed//len(cases),out/'last.pt',cases)
-                finally: np.random.set_state(nrng); random.setstate(prng)
+    last_save=time.perf_counter()
+    try:
+        with (out/'history.jsonl').open('a') as log:
+            while completed<steps:
+                if stop_requested and stop_requested(): save(); raise InterruptedError('Checkpoint saved for Slurm continuation')
+                start=time.perf_counter()
+                if not order: order=torch.randperm(len(cases)).tolist()
+                idx=order[-1]; source=cases[idx]
+                if fast:
+                    upcoming=[cases[j] for j in reversed(order[-int(cfg.get('prefetch_cases',2)):])]
+                    store.prefetch([(c,visits[j]) for c,j in zip(upcoming,reversed(order[-int(cfg.get('prefetch_cases',2)):]))])
+                sampler=store.get(source,visits[idx]);data_ready=time.perf_counter()
+                c=dict(source)
+                if fast:c.update(device_metadata[idx])
+                else:
+                    for k in ('s','axis','boundary','boundary_endo'):
+                        if k in c: c[k]=c[k].to(device)
+                c['_area_sampler']=sampler
+                opt.zero_grad(set_to_none=True)
+                if str(device).startswith('cuda'): torch.cuda.reset_peak_memory_stats()
+                backward_start=time.perf_counter();loss,stats=backward(model,codes[idx],c,cfg,completed)
+                backward_end=time.perf_counter()
+                if not torch.isfinite(loss): raise FloatingPointError('Nonfinite complete-case loss')
+                params=[codes[idx]]+([] if prior else list(model.parameters()))
+                norm=torch.nn.utils.clip_grad_norm_(params,cfg['clip_grad'],error_if_nonfinite=True)
+                opt.step(); visits[idx]+=1; completed+=1;order.pop()
+                if str(device).startswith('cuda'): torch.cuda.synchronize()
+                row=dict(step=completed,epoch=completed/len(cases),case_id=c['case_id'],phase=c['phase'],case_updates=visits[idx],
+                    loss=float(loss),gradient_norm=float(norm),pool_generation=sampler.meta['generation'],
+                    data_wait_seconds=data_ready-start,backward_seconds=backward_end-backward_start,
+                    optimizer_seconds=time.perf_counter()-backward_end,
+                    update_seconds=time.perf_counter()-start,
+                    peak_cuda_allocated_bytes=torch.cuda.max_memory_allocated() if str(device).startswith('cuda') else 0,**stats)
+                log.write(json.dumps(row)+'\n'); log.flush()
+                if completed==1 or completed%cfg['log_every']==0: print(json.dumps(row),flush=True)
+                if completed%cfg['save_every']==0 or completed in milestones or (on_epoch and completed%len(cases)==0) or time.perf_counter()-last_save>=cfg.get('checkpoint_seconds',float('inf')):
+                    save();last_save=time.perf_counter()
+                if (completed in milestones and diagnose) or (completed%len(cases)==0 and on_epoch):
+                    # Evaluation may seed its fresh latent fits; preserve every training RNG.
+                    nrng=np.random.get_state(); prng=random.getstate()
+                    devices=[torch.cuda.current_device()] if str(device).startswith('cuda') else []
+                    try:
+                        with torch.random.fork_rng(devices=devices):
+                            if completed in milestones and diagnose: diagnose(completed,out/'last.pt',cases)
+                            if completed%len(cases)==0 and on_epoch: on_epoch(completed//len(cases),out/'last.pt',cases)
+                    finally: np.random.set_state(nrng); random.setstate(prng)
+    except BaseException:
+        save()
+        if fast:store.close()
+        raise
+
     save()
+    if fast:store.close()
     # The shared model must be bit-identical during heldout-code optimization.
     if prior:
         for k,v in model.state_dict().items():

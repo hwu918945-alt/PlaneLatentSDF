@@ -14,10 +14,15 @@ from .data import load_case
 from .area_pool import digest
 
 STOP=False
+STAGE_PROCESSES={}
 
 def stop_handler(signum,frame):
     global STOP
     STOP=True
+    if 'plane_auto_occ.precache' in sys.modules:
+        sys.modules['plane_auto_occ.precache'].STOP=True
+    for child in STAGE_PROCESSES.values():
+        if child.poll() is None:child.send_signal(signal.SIGUSR1)
     print(f'Signal {signum}: checkpoint and continue in a requeued job',flush=True)
 
 
@@ -58,8 +63,9 @@ def gate(root,plan,cfg,lock,device):
         return
     output=root/'gates'
     output.mkdir(exist_ok=True)
-    subprocess.run([sys.executable,'-B','-m','unittest','plane_auto_occ.tests','plane_auto_occ.repair_tests',
-        'plane_auto_occ.migration_tests','plane_auto_occ.population_tests'],check=True)
+    suites=['plane_auto_occ.fast_tests'] if cfg.get('pipeline_backend')=='offline_batched_v1' else [
+        'plane_auto_occ.tests','plane_auto_occ.repair_tests','plane_auto_occ.migration_tests','plane_auto_occ.population_tests']
+    subprocess.run([sys.executable,'-B','-m','unittest',*suites],check=True)
     if plan['kind']=='heart':
         paths=[str(root/r['path']) for r in lock['splits']['train']['records'][:2]];observed=[None,None]
     else: paths=[str(root/'data/case.npz')];observed=[None]
@@ -71,6 +77,9 @@ def gate(root,plan,cfg,lock,device):
     if not all(np.isfinite(row['loss']) and row['pool_fallbacks']==0 for row in history): raise ValueError('Invalid gate loss/sampling')
     if plan['kind']=='heart':
         p=str(root/lock['splits']['val']['records'][0]['path']);n=load_case(p)['total_planes']
+        if cfg.get('pipeline_backend')=='offline_batched_v1':
+            from .offline_pools import prepare
+            prepare(p,[0,n//2,n-1],cfg['offline_pool_root'],cfg,0)
         frozen=fit([p],[[0,n//2,n-1]],config,output/'frozen_gpu',device,steps=2,pretrained=checkpoint,
             resume=True,stop_requested=lambda:STOP)
         final=torch.load(frozen,map_location='cpu',weights_only=False);prior=torch.load(checkpoint,map_location='cpu',weights_only=False)
@@ -81,6 +90,8 @@ def gate(root,plan,cfg,lock,device):
 
 
 def heldout_split(root,split,shared,cfg,lock,plan,device,tag):
+    if cfg.get('pipeline_backend')=='offline_batched_v1':
+        stage_barrier(root,split)
     base=root/'outputs'/tag/split;base.mkdir(parents=True,exist_ok=True);reports=[]
     for row in lock['splits'][split]['records']:
         path=root/row['path'];key=f"{row['case_id']}_{'ED' if row['phase']==0 else 'ES'}"
@@ -111,11 +122,40 @@ def heldout_split(root,split,shared,cfg,lock,plan,device,tag):
     write(base/'SUMMARY.json',summary);return summary
 
 
+def launch_stage(root,split):
+    key=(str(root.resolve()),split)
+    if key in STAGE_PROCESSES:return
+    cfg=json.loads((root/'config.json').read_text())
+    with (root/'logs'/f'precache_{split}_background.log').open('a') as log:
+        STAGE_PROCESSES[key]=subprocess.Popen([sys.executable,'-B','-m','plane_auto_occ.precache',
+            '--experiment',str(root),'--split',split,'--workers',str(cfg.get('cache_workers',3))],stdout=log,stderr=subprocess.STDOUT)
+    print(f'Offline cache worker started for {split}',flush=True)
+
+
+def stage_barrier(root,split):
+    child=STAGE_PROCESSES.get((str(root.resolve()),split))
+    if child:
+        while child.poll() is None:
+            if STOP:raise InterruptedError('Checkpoint and resume offline stage')
+            try:child.wait(timeout=1.)
+            except subprocess.TimeoutExpired:pass
+        if child.returncode:
+            if STOP or child.returncode==85:raise InterruptedError('Offline stage interrupted')
+            raise RuntimeError(f'Offline stage {split} failed; inspect its cache log')
+    from .precache import ensure
+    ensure(root,split)
+
+
 def heart(root,plan,cfg,lock,device):
     paths=[str(root/r['path']) for r in lock['splits']['train']['records']]
     checkpoints=root/'outputs/checkpoints';checkpoints.mkdir(parents=True,exist_ok=True)
     selectionfile=root/'outputs/CHECKPOINT_SELECTION.json'
     def epoch_action(epoch,checkpoint,cases):
+        if cfg.get('pipeline_backend')=='offline_batched_v1':
+            from .precache import prune
+            refresh=cfg['pool_refresh_updates']
+            if epoch>0 and epoch%refresh==0:prune(root,'train',epoch//refresh-1)
+            if refresh<=epoch<min(plan['val_epochs']):launch_stage(root,'val')
         if epoch not in plan['visual_epochs'] and epoch not in plan['val_epochs']:return
         stable=checkpoints/f'epoch_{epoch:04d}.pt'
         if not stable.exists():shutil.copyfile(checkpoint,stable)
@@ -143,8 +183,15 @@ def heart(root,plan,cfg,lock,device):
     # Initial random field is generated independently so it cannot consume RNG.
     if not selectionfile.exists():raise ValueError('Validation never selected a checkpoint')
     best=checkpoints/'best.pt'
+    if cfg.get('pipeline_backend')=='offline_batched_v1':
+        from .precache import prune
+        # Train is complete: release only this run's remaining generation before
+        # building all test pools. No model/checkpoint selection uses test data.
+        prune(root,'train',(plan['train_epochs']-1)//cfg['pool_refresh_updates'])
     test=root/'outputs/final_selected/test/SUMMARY.json'
-    if not test.exists():heldout_split(root,'test',best,cfg,lock,plan,device,'final_selected')
+    if not test.exists():
+        if cfg.get('pipeline_backend')=='offline_batched_v1':launch_stage(root,'test')
+        heldout_split(root,'test',best,cfg,lock,plan,device,'final_selected')
     write(root/'outputs/RUN_COMPLETE.json',dict(train_checkpoint_sha256=digest(shared),selected=json.loads(selectionfile.read_text())['best'],
         test_summary=str(test),train_epochs=plan['train_epochs'],test_used_for_checkpoint_selection=False))
 

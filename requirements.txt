@@ -6,3 +6,4 @@ scikit-image>=0.21
 matplotlib>=3.7
 shapely>=2.0
 trimesh>=4.0
+numba>=0.59

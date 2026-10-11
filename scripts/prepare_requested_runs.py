@@ -38,7 +38,8 @@ def main():
     if [len(patientsets[s]) for s in ('train','val','test')]!=[285,36,36]:raise ValueError('Split count mismatch')
     if any(patientsets[x]&patientsets[y] for x,y in (('train','val'),('train','test'),('val','test'))):raise ValueError('Patient split leakage')
     (root/'data_lock.json').write_text(json.dumps(dict(source_copies=copied,splits=counts,cache_semantics='true Epi-minus-Endo myocardium shell',excluded_stress_patients=3),indent=2))
-    cfg=dict(base);cfg.update(steps=114000,save_every=5700,log_every=50)
+    cfg=dict(base);cfg.update(steps=114000,save_every=250,log_every=50,pipeline_backend='offline_batched_v1',
+        fast_query_points=524288,offline_pool_root=str(root/'point_pools'),cache_workers=3,prefetch_cases=2,checkpoint_seconds=300,sampler_cache_cases=570)
     (root/'config.json').write_text(json.dumps(cfg,indent=2))
     plan=dict(kind='heart',train_epochs=200,updates_per_epoch=570,total_updates=114000,
         val_epochs=[100,200],inference_steps=2000,train_observed='all SAX',

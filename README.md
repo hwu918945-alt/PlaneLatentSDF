@@ -101,5 +101,10 @@ bunny及气球狗分别随机初始化，用全部25观测层拟合4000次，每
 python -m plane_auto_occ test-population
 PYTHONPATH=. python scripts/prepare_requested_runs.py --source-root /absolute/compatible/cache-repo --repo-root .
 PYTHONPATH=. python scripts/freeze_experiment.py --experiment /absolute/run
-TASK_EXPERIMENT=/absolute/run sbatch scripts/experiment_job.sh
+PYTHONPATH=. python scripts/submit_fast_heart.py --experiment /absolute/heart_run
+# Legacy solid runs retain the direct experiment_job.sh submission.
 ```
+
+## 全量心脏训练加速
+
+新生成的全量心脏run默认先离线准备全部训练点池，再启动依赖缓存成功的GPU训练；缓存采用mmap、CPU预取与524288点查询上限。每病例完整损失、点数及一次Adam更新不变。新增Numba依赖用于精确轮廓分类加速。A40的小规模整流程试跑为0.1125秒/训练更新、0.0489秒/冻结code更新；这不是完整570-phase epoch的实测结果。方法、验证和缓存阶段管理见 [docs/FAST_TRAINING.md](docs/FAST_TRAINING.md)。
