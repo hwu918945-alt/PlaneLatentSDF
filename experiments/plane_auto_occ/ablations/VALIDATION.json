@@ -1,0 +1,66 @@
+{
+  "original_V2_files_unchanged": 31,
+  "base_source_commit": "989601aabc0083388ec88230d3ab0eee117e5e68",
+  "original_tests": 12,
+  "ablation_tests": 11,
+  "result": "PASS",
+  "cpu_smoke": {
+    "updates": 2,
+    "points_per_plane": 32768,
+    "paired_step0": true,
+    "decoder_queries_per_update": 98304
+  },
+  "C_seven_native_dice_differences": [
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0,
+    0.0
+  ],
+  "C_native_mesh_counts_equal": true,
+  "observed_BC_max_abs_logit_diff": 9.148290843086215e-06,
+  "observed_BC_classifications_equal": true,
+  "raw_float32_observed_discrepancies": [
+    {
+      "index": 0,
+      "margin_mm": 5.0,
+      "max_abs_logit_diff": 6.4849853515625e-05,
+      "classification_flip_count": 0
+    },
+    {
+      "index": 3,
+      "margin_mm": 5.0,
+      "max_abs_logit_diff": 4.1961669921875e-05,
+      "classification_flip_count": 0
+    },
+    {
+      "index": 6,
+      "margin_mm": 5.0,
+      "max_abs_logit_diff": 5.7220458984375e-05,
+      "classification_flip_count": 0
+    },
+    {
+      "index": 0,
+      "margin_mm": 20.0,
+      "max_abs_logit_diff": 9.1552734375e-05,
+      "classification_flip_count": 0
+    },
+    {
+      "index": 3,
+      "margin_mm": 20.0,
+      "max_abs_logit_diff": 7.62939453125e-05,
+      "classification_flip_count": 0
+    },
+    {
+      "index": 6,
+      "margin_mm": 20.0,
+      "max_abs_logit_diff": 6.103515625e-05,
+      "classification_flip_count": 0
+    }
+  ],
+  "evaluation_precision": "shared float64 field arithmetic after identical native float32 xyz rounding; fixed native G outputs promoted",
+  "execution_validation_only": true,
+  "A_formal_training_not_yet_run": true
+}
