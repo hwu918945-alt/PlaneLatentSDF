@@ -3,6 +3,8 @@ import argparse
 import hashlib
 import json
 import random
+import subprocess
+import sys
 from pathlib import Path
 import numpy as np
 import torch
@@ -19,12 +21,17 @@ def parser():
     p.add_argument('--config',default=str(Path(__file__).with_name('config.json')))
     p.add_argument('--output',required=True); p.add_argument('--device',default='cpu')
     p.add_argument('--steps',type=int); p.add_argument('--pretrained',help='freeze shared model; optimize NEW codes only')
+    p.add_argument('--milestones', help='Single-case read-only observed-plane diagnostics, e.g. 0,50,100,200,500,1000,2000')
+    p.add_argument('--diagnostics-resolution', type=int, default=96)
     return p
 
 
 def main():
     a=parser().parse_args(); cfg=json.loads(Path(a.config).read_text())
     if a.steps is not None: cfg['steps']=a.steps
+    milestones=set(int(x) for x in a.milestones.split(',')) if a.milestones else set()
+    if milestones and (not a.case or min(milestones)<0 or max(milestones)>cfg['steps']):
+        raise ValueError('Milestones require --case and steps within the training budget')
     if cfg['steps'] < 1 or cfg['points'] < 4 or cfg['points'] % 4: raise ValueError('Invalid steps/points')
     if min(cfg['threads'],cfg['log_every'],cfg['save_every'],cfg['clip_grad'],cfg['lr_shared'],cfg['lr_latent']) <= 0:
         raise ValueError('Threads, intervals, clip norm and learning rates must be positive')
@@ -71,6 +78,17 @@ def main():
         payload=dict(format='plane_auto_occ_v1',model=model.state_dict(),codes=codes.detach().cpu(),config=cfg,
                      records=manifest,training_keys=train_keys,mode='latent_only' if a.pretrained else 'joint',step=step)
         tmp=out/'last.pt.tmp'; torch.save(payload,tmp); tmp.replace(out/'last.pt')
+    def diagnose(step):
+        if step not in milestones: return
+        import shutil
+        save(step)
+        dest=out/f'step_{step:05d}'; dest.mkdir()
+        checkpoint=dest/'checkpoint.pt'; shutil.copyfile(out/'last.pt',checkpoint)
+        # Separate process: diagnostics cannot advance training RNG or change parameters.
+        subprocess.run([sys.executable,'-B','-m','experiments.plane_auto_occ.diagnostics',
+                        '--checkpoint',str(checkpoint),'--case',a.case,'--output',str(dest/'diagnostics'),
+                        '--device',a.device,'--resolution',str(a.diagnostics_resolution)],check=True)
+    diagnose(0)
     order=[]
     with (out/'history.jsonl').open('w') as log:
         for step in range(cfg['steps']):
@@ -87,6 +105,7 @@ def main():
             log.write(json.dumps(row)+'\n'); log.flush()
             if step == 0 or (step+1)%cfg['log_every'] == 0: print(json.dumps(row),flush=True)
             if (step+1)%cfg['save_every'] == 0: save(step+1)
+            diagnose(step+1)
     save(cfg['steps'])
     print(f'Saved {out / "last.pt"}; evaluate geometry separately')
 
