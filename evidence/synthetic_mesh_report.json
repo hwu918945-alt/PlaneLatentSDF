@@ -1,0 +1,14 @@
+{
+  "vertices": 13160,
+  "faces": 25846,
+  "boundary_edges": 474,
+  "nonmanifold_edges": 0,
+  "watertight_edge_test": false,
+  "vertices_on_lateral_boundary": 0,
+  "vertices_on_axial_boundary": 482,
+  "field_min": -49.07271957397461,
+  "field_max": 5.92483377456665,
+  "no_padding": true,
+  "no_artificial_caps": true,
+  "axial_extent_mm": 60.00000238418579
+}
