@@ -5,6 +5,7 @@ import json
 import random
 import subprocess
 import sys
+import time
 from pathlib import Path
 import numpy as np
 import torch
@@ -23,12 +24,15 @@ def parser():
     p.add_argument('--steps',type=int); p.add_argument('--pretrained',help='freeze shared model; optimize NEW codes only')
     p.add_argument('--milestones', help='Single-case read-only observed-plane diagnostics, e.g. 0,50,100,200,500,1000,2000')
     p.add_argument('--diagnostics-resolution', type=int, default=96)
+    p.add_argument('--area-pool',help='Observed-only area-uniform V2 pool')
     return p
 
 
 def main():
     a=parser().parse_args(); cfg=json.loads(Path(a.config).read_text())
     if a.steps is not None: cfg['steps']=a.steps
+    if cfg.get('sampling_version')=='observed_area_uniform_v2' and not a.area_pool:
+        raise ValueError('V2 requires --area-pool; legacy near/far sampling cannot be used')
     milestones=set(int(x) for x in a.milestones.split(',')) if a.milestones else set()
     if milestones and (not a.case or min(milestones)<0 or max(milestones)>cfg['steps']):
         raise ValueError('Milestones require --case and steps within the training budget')
@@ -66,6 +70,14 @@ def main():
     groups=[dict(params=[codes],lr=cfg['lr_latent'])]
     if not a.pretrained: groups.append(dict(params=model.parameters(),lr=cfg['lr_shared']))
     opt=torch.optim.Adam(groups)
+    if a.area_pool:
+        from .area_pool import AreaSampler,digest,build_pool
+        from .chunked import backward_case
+        if len(cases)!=1: raise ValueError('This repair run is a single case')
+        sampler=AreaSampler(a.area_pool,cfg['seed'])
+        if sampler.meta['observed']!=cases[0]['observed'] or sampler.meta['source_sha256']!=digest(cases[0]['path']):
+            raise ValueError('Pool observation/source mismatch')
+        cases[0]['_area_sampler']=sampler
     manifest=[]
     for c in cases:
         manifest.append(dict(path=c['path'],case_id=c['case_id'],phase=c['phase'],observed=c['observed'],
@@ -77,6 +89,9 @@ def main():
     def save(step):
         payload=dict(format='plane_auto_occ_v1',model=model.state_dict(),codes=codes.detach().cpu(),config=cfg,
                      records=manifest,training_keys=train_keys,mode='latent_only' if a.pretrained else 'joint',step=step)
+        if a.area_pool:
+            payload['sampling_pool']=dict(path=sampler.path,sha256=digest(sampler.path),generation=sampler.meta['generation'])
+            payload['objective_version']=cfg['objective_version']
         tmp=out/'last.pt.tmp'; torch.save(payload,tmp); tmp.replace(out/'last.pt')
     def diagnose(step):
         if step not in milestones: return
@@ -92,16 +107,31 @@ def main():
     order=[]
     with (out/'history.jsonl').open('w') as log:
         for step in range(cfg['steps']):
+            update_start=time.perf_counter()
+            if a.area_pool and step and step%cfg['pool_refresh_updates']==0:
+                generation=step//cfg['pool_refresh_updates']
+                target=out/'sampling_pools'/f'generation_{generation:03d}.npz'
+                build_pool(cases[0]['path'],cases[0]['observed'],target,tuple(cfg['pool_capacities']),cfg['seed'],generation,
+                           cfg['pool_margin_mm'],cfg['boundary_band_mm'],cfg['near_mm'])
+                sampler=AreaSampler(target,cfg['seed']); cases[0]['_area_sampler']=sampler
             if not order: order=torch.randperm(len(cases)).tolist()
-            idx=order.pop(); c={k:(v.to(a.device) if torch.is_tensor(v) else v) for k,v in cases[idx].items()}
+            idx=order.pop()
+            active={'axis','s','boundary','boundary_endo'} if a.area_pool else set(cases[idx])
+            c={k:(v.to(a.device) if k in active and torch.is_tensor(v) else v) for k,v in cases[idx].items()}
             opt.zero_grad(set_to_none=True)
-            loss,stats=objective(model,codes[idx],c,cfg,step)
+            if a.device.startswith('cuda'): torch.cuda.reset_peak_memory_stats()
+            loss,stats=backward_case(model,codes[idx],c,cfg,step) if a.area_pool else objective(model,codes[idx],c,cfg,step)
             if not bool(torch.isfinite(loss)): raise FloatingPointError(f'Nonfinite loss at step {step}')
-            loss.backward()
+            if not a.area_pool: loss.backward()
             params=[codes]+([] if a.pretrained else list(model.parameters()))
             norm=torch.nn.utils.clip_grad_norm_(params,cfg['clip_grad'],error_if_nonfinite=True)
             opt.step()
+            if a.device.startswith('cuda'): torch.cuda.synchronize()
             row=dict(step=step+1,case_id=c['case_id'],phase=c['phase'],loss=float(loss.detach()),gradient_norm=float(norm),**stats)
+            if a.area_pool:
+                row.update(update_seconds=time.perf_counter()-update_start,pool_generation=sampler.meta['generation'],
+                           peak_cuda_allocated_bytes=torch.cuda.max_memory_allocated() if a.device.startswith('cuda') else 0,
+                           peak_cuda_reserved_bytes=torch.cuda.max_memory_reserved() if a.device.startswith('cuda') else 0)
             log.write(json.dumps(row)+'\n'); log.flush()
             if step == 0 or (step+1)%cfg['log_every'] == 0: print(json.dumps(row),flush=True)
             if (step+1)%cfg['save_every'] == 0: save(step+1)

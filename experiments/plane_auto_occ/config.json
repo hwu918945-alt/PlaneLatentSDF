@@ -1,7 +1,7 @@
 {
   "latent_dim": 128,
   "width": 256,
-  "points": 1024,
+  "points": 32768,
   "steps": 2000,
   "lr_shared": 0.001,
   "lr_latent": 0.001,
@@ -16,5 +16,19 @@
   "log_every": 50,
   "save_every": 250,
   "seed": 19,
-  "threads": 2
+  "threads": 2,
+  "microbatch_points": 4096,
+  "pool_capacities": [
+    131072,
+    65536,
+    65536
+  ],
+  "pool_refresh_updates": 80,
+  "pool_margin_mm": 20.0,
+  "boundary_band_mm": 0.05,
+  "near_mm": 3.0,
+  "loo_mix": 0.25,
+  "data_weight": 1.5,
+  "objective_version": "per_plane_direct_loo_mix_v2",
+  "sampling_version": "observed_area_uniform_v2"
 }
