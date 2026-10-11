@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "plane-auto-occupancy"
+version = "0.1.0"
+description = "Case auto-decoder myocardium occupancy with physical plane-latent interpolation"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = ["torch>=2.0", "numpy>=1.24", "scipy>=1.10", "scikit-image>=0.21", "matplotlib>=3.7", "shapely>=2.0"]
+
+[project.scripts]
+plane-auto-occ = "plane_auto_occ.__main__:main"
+
+[tool.setuptools.packages.find]
+include = ["plane_auto_occ*"]
+exclude = ["runs*", "docs*"]
+
+[tool.setuptools.package-data]
+plane_auto_occ = ["config.json"]

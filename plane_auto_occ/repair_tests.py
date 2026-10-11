@@ -93,7 +93,7 @@ class Repair(unittest.TestCase):
         cfg=json.loads(Path(__file__).with_name('config.json').read_text())
         cfg.update(points=128,microbatch_points=32,width=32,pool_capacities=[512,256,256])
         path=self.root/'small_config.json';path.write_text(json.dumps(cfg));out=self.root/'refresh_fit'
-        result=subprocess.run([sys.executable,'-B','-m','experiments.plane_auto_occ.train',
+        result=subprocess.run([sys.executable,'-B','-m','plane_auto_occ.train',
             '--case',str(self.case),'--observed','0,3,6','--area-pool',str(self.pool),
             '--config',str(path),'--steps','81','--device','cpu','--output',str(out)],capture_output=True,text=True)
         self.assertEqual(result.returncode,0,result.stderr)

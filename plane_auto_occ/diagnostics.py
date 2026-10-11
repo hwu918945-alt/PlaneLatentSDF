@@ -40,9 +40,11 @@ def main():
     c=load_case(a.case,a.device,ck['records'][0]['observed'])
     if 'sampling_pool' in ck:
         from .area_pool import AreaSampler,digest
+        from .paths import resolve_sampling_pool
         pool=ck['sampling_pool']
-        if digest(pool['path'])!=pool['sha256']: raise ValueError('Diagnostic pool hash changed')
-        c['_area_sampler']=AreaSampler(pool['path'],1911)
+        pool_path=resolve_sampling_pool(a.checkpoint,pool)
+        if digest(pool_path)!=pool['sha256']: raise ValueError('Diagnostic pool hash changed')
+        c['_area_sampler']=AreaSampler(pool_path,1911)
     cfg=ck['config']; model=AutoOccupancy(cfg['latent_dim'],cfg['width']).to(a.device).eval()
     model.load_state_dict(ck['model']); code=ck['codes'][0].to(a.device).requires_grad_()
     u=model.plane_latents(code,c['s'],c['phase']); ul=loo(c['s'],u)

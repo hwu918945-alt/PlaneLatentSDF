@@ -9,17 +9,22 @@ import torch
 
 
 def verify_sources(exp):
-    root=Path(__file__).resolve().parents[2]
+    exp=Path(exp).resolve()
+    root=exp/'runtime' if (exp/'runtime').is_dir() else Path(__file__).resolve().parents[1]
     manifest=json.loads((exp/'source_lock.json').read_text())
     for name,digest in manifest['files'].items():
         if hashlib.sha256((root/name).read_bytes()).hexdigest()!=digest:
             raise ValueError(f'Locked source changed: {name}')
-    cache=exp/'cache/train/002_ED.npz'
+    cache=exp/manifest.get('cache_path','cache/train/002_ED.npz')
     if hashlib.sha256(cache.read_bytes()).hexdigest()!=manifest['cache_sha256']:
         raise ValueError('Locked cache changed')
     if 'pool_sha256' in manifest:
         if hashlib.sha256((exp/'pools/generation_000.npz').read_bytes()).hexdigest()!=manifest['pool_sha256']:
             raise ValueError('Initial area pool changed')
+    for prefix in ('config','reference_initial'):
+        if prefix+'_sha256' in manifest:
+            if hashlib.sha256((exp/manifest[prefix+'_path']).read_bytes()).hexdigest()!=manifest[prefix+'_sha256']:
+                raise ValueError(f'Locked {prefix} changed')
     return cache,root,manifest
 
 
@@ -27,21 +32,28 @@ def main():
     p=argparse.ArgumentParser(); p.add_argument('--experiment',required=True)
     p.add_argument('--device',default='cuda'); a=p.parse_args()
     exp=Path(a.experiment).resolve(); case,root,lock=verify_sources(exp)
+    config=exp/lock['config_path'] if 'config_path' in lock else Path(__file__).with_name('config.json')
+    cfg=json.loads(config.read_text()); steps=int(cfg['steps'])
+    observed=lock.get('observed',[0,3,6]); observed_arg=','.join(map(str,observed))
+    from .data import load_case
+    nplanes=load_case(case,observed=observed)['total_planes']
+    heldout=sorted(set(range(nplanes))-set(observed))
+    milestones=sorted({v for v in [0,50,100,200,500,1000,2000,steps] if v<=steps})
     if a.device=='cuda' and not torch.cuda.is_available(): raise RuntimeError('CUDA unavailable')
     def run(module,*args):
-        subprocess.run([sys.executable,'-B','-m','experiments.plane_auto_occ.'+module,*map(str,args)],cwd=root,check=True)
+        subprocess.run([sys.executable,'-B','-m','plane_auto_occ.'+module,*map(str,args)],cwd=root,check=True)
     try:
         run('tests')
         run('repair_tests')
         pool=exp/'pools/generation_000.npz'
         smoke=exp/'outputs/cuda_smoke'
-        run('train','--case',case,'--observed','0,3,6','--area-pool',pool,'--output',smoke,'--device',a.device,
+        run('train','--case',case,'--observed',observed_arg,'--config',config,'--area-pool',pool,'--output',smoke,'--device',a.device,
             '--steps',2,'--milestones','0,2','--diagnostics-resolution',64)
         ck=torch.load(smoke/'last.pt',map_location='cpu',weights_only=False)
-        assert ck['step']==2 and ck['records'][0]['observed']==[0,3,6] and ck['mode']=='joint'
+        assert ck['step']==2 and ck['records'][0]['observed']==observed and ck['mode']=='joint'
         assert all(torch.isfinite(v).all() for v in ck['model'].values()) and torch.isfinite(ck['codes']).all()
-        baseline=exp/'../plane_auto_occ_002_ED_20261011_v1/outputs/fit/step_00000/checkpoint.pt'
-        if baseline.exists():
+        baseline=exp/lock['reference_initial_path'] if 'reference_initial_path' in lock else None
+        if baseline is not None:
             initial=torch.load(smoke/'step_00000/checkpoint.pt',map_location='cpu',weights_only=False)
             reference=torch.load(baseline,map_location='cpu',weights_only=False)
             assert all(torch.equal(initial['model'][k],v) for k,v in reference['model'].items())
@@ -51,23 +63,23 @@ def main():
             torch_version=torch.__version__,source_commit=lock['commit']),indent=2))
         fit=exp/'outputs/fit'
         # Fresh process and seed reset: no smoke weights, optimizer, or RNG reused.
-        run('train','--case',case,'--observed','0,3,6','--area-pool',pool,'--output',fit,'--device',a.device,
-            '--steps',2000,'--milestones','0,50,100,200,500,1000,2000')
+        run('train','--case',case,'--observed',observed_arg,'--config',config,'--area-pool',pool,'--output',fit,'--device',a.device,
+            '--steps',steps,'--milestones',','.join(map(str,milestones)))
         ck=torch.load(fit/'last.pt',map_location='cpu',weights_only=False)
-        assert ck['step']==2000 and ck['records'][0]['observed']==[0,3,6]
-        (exp/'TRAIN_COMPLETE.json').write_text(json.dumps(dict(steps=2000,checkpoint=str(fit/'last.pt'),
-            observed=[0,3,6],strict_heldout=[1,2,4,5],source_commit=lock['commit']),indent=2))
+        assert ck['step']==steps and ck['records'][0]['observed']==observed
+        (exp/'TRAIN_COMPLETE.json').write_text(json.dumps(dict(steps=steps,checkpoint=str(fit/'last.pt'),
+            observed=observed,strict_heldout=heldout,source_commit=lock['commit']),indent=2))
         # Formal heldout geometry evaluation starts only after training completes.
         evaluation=exp/'outputs/final_eval'
         run('evaluate','--checkpoint',fit/'last.pt','--case',case,'--output',evaluation,'--device',a.device)
         metrics=json.loads((evaluation/'metrics.json').read_text())
-        assert [r['cached_plane_index'] for r in metrics['planes'] if r['kind']=='strict_heldout']==[1,2,4,5]
+        assert [r['cached_plane_index'] for r in metrics['planes'] if r['kind']=='strict_heldout']==heldout
         # The repair protocol always adds a separate 20-mm robustness audit.
         run('evaluate','--checkpoint',fit/'last.pt','--case',case,'--output',exp/'outputs/final_eval_margin20mm',
             '--device',a.device,'--margin-mm',20)
         margin=5
         mesh=exp/'outputs/myocardium.obj'
-        result=subprocess.run([sys.executable,'-B','-m','experiments.plane_auto_occ.extract_mesh',
+        result=subprocess.run([sys.executable,'-B','-m','plane_auto_occ.extract_mesh',
             '--checkpoint',str(fit/'last.pt'),'--case',str(case),'--output',str(mesh),
             '--device',a.device,'--resolution','128','--margin-mm',str(margin)],cwd=root,
             stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)
@@ -77,7 +89,7 @@ def main():
             if 'No finite logit zero crossing; cannot extract mesh' not in result.stderr:
                 raise RuntimeError(result.stderr)
             mesh.with_suffix('.json').write_text(json.dumps(dict(status='no_zero_crossing'),indent=2))
-        complete=dict(steps=2000,evaluation=str(evaluation),mesh_extracted=mesh.exists(),
+        complete=dict(steps=steps,evaluation=str(evaluation),mesh_extracted=mesh.exists(),
             heldout_ground_truth_touches_border=any(r.get('ground_truth_touches_border',False) for r in metrics['planes']),
             source_commit=lock['commit'],scope='single-case execution complete; inspect geometry and latent sensitivity')
         import numpy as np

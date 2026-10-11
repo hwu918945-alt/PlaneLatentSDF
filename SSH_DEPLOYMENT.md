@@ -1,36 +1,25 @@
-# SSH deployment of the sampling/layer-weight repair
+# 独立仓库 Slurm 部署
 
-Use the same repository with baseline9b6add39f1efc131ca08ee2876179211458653b7,
-new branch `experiment/plane-auto-occupancy-repair`. Run code in an isolated
-worktree and keep V1 outputs intact. See README.md and REPAIR_PLAN.md for method.
-
-Create a separate local experiment with cache/train/002_ED.npz copied byte for
-byte from the V1 occupancy cache. Build the initial observed0,3,6 area pool as
-pools/generation_000.npz. Source/cache lock at the experiment root contains
-commit, files mapping relative source paths to SHA256, cache_sha256 and the
-initial pool_sha256. Create gates/ and logs/. The deployment validates this lock.
+先按根README安装，并运行prepare-run。每个run包含自己的 `runtime/plane_auto_occ/`、cache、config、初始面积池及source_lock。Slurm只从该冻结runtime执行，不依赖任何 PlaneLatentSDF 工作树。
 
 ```bash
-export TASK_EXPERIMENT=/absolute/path/local_repair_experiment
-export TASK_CODE=/absolute/path/local_repair_experiment/runtime
-export TASK_PY=/absolute/path/existing_cuda_environment/bin/python
-sbatch --job-name=auto_occ_repair_002_ED \
-  --output="$TASK_EXPERIMENT/logs/auto_occ_repair_%j.out" \
-  --error="$TASK_EXPERIMENT/logs/auto_occ_repair_%j.err" \
-  "$TASK_CODE/experiments/plane_auto_occ/single_case_job.sh"
+python -m plane_auto_occ prepare-run \
+  --case /absolute/path/002_ED.npz --observed 0,3,6 \
+  --output /absolute/path/PlaneAutoOccupancy/runs/new_002_ED
+export TASK_EXPERIMENT=/absolute/path/PlaneAutoOccupancy/runs/new_002_ED
+export TASK_PY=/absolute/path/cuda_python/bin/python
+sbatch --job-name=plane_auto_occ_002_ED \
+  --output="$TASK_EXPERIMENT/logs/auto_occ_%j.out" \
+  --error="$TASK_EXPERIMENT/logs/auto_occ_%j.err" \
+  scripts/single_case_job.sh
 ```
 
-The inherited job requests aiaca40/4a40, one GPU, four CPUs,24GB and four hours.
-Deployment runs baseline/repair tests and a two-update CUDA cold smoke, then
-starts a fresh2000-update fit. Only model initialization is compared to V1;
-no V1 trained weights are loaded into the repaired model.
+脚本默认分区aiaca40、qos4a40、1GPU、4CPU、24GB、4小时，可通过sbatch显式覆盖资源选项。TASK_CODE默认该run的runtime，TASK_PY默认python；建议明确提供既有CUDA Python路径。
 
-Outputs: outputs/cuda_smoke; outputs/fit/history.jsonl and step_XXXXX/diagnostics;
-outputs/fit/sampling_pools/generation_NNN.npz/json for the80-update refreshes;
-outputs/final_eval and final_eval_margin20mm; outputs/myocardium.obj/json;
-outputs/posthoc_audit.json with per-class metrics, ring check and open-edge locations.
-GPU_SMOKE_COMPLETE/TRAIN_COMPLETE/RUN_COMPLETE identify execution stages.
-Read geometry and proxy Dice before accepting a result; PIPELINE_FAILED records
-execution errors. No early stopping, schedule, best-checkpoint selection or
-alteration of hidden-plane supervision is introduced. Cache/checkpoint artifacts
-are local only. Publish source and code patches, without real patient pools.
+先验证源码/cache/config/pool锁并运行原6项及修复6项测试，随后两步cold smoke，再新进程重置初始化和随机种子完成配置中的正式更新（默认2000）。只有显式提供prepare-run的 `--reference-initial` 才比较初始化，对照文件复制进run且被锁定。
+
+观测索引由run锁读取，严格隐藏索引为剩余缓存层，case文件名不限定002_ED。每层采样、分块、loss和optimizer协议不因部署迁移改变。完成正式训练后才评估隐藏轮廓，并输出+5mm和+20mm评估、uncapped128³网格、事后验收；无早停或best checkpoint。
+
+主要产物为 outputs/fit/history.jsonl、里程碑、动态面积池、final_eval、final_eval_margin20mm、myocardium.obj/json、posthoc_audit.json，以及GPU_SMOKE_COMPLETE/TRAIN_COMPLETE/RUN_COMPLETE。PIPELINE_FAILED仅记录执行失败。事后观测验收失败不会改写训练预算。
+
+真实数据、权重、日志和派生mesh都存runs并被Git忽略；新clone只携带代码和文档。

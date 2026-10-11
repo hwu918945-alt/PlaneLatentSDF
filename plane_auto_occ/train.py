@@ -100,7 +100,7 @@ def main():
         dest=out/f'step_{step:05d}'; dest.mkdir()
         checkpoint=dest/'checkpoint.pt'; shutil.copyfile(out/'last.pt',checkpoint)
         # Separate process: diagnostics cannot advance training RNG or change parameters.
-        subprocess.run([sys.executable,'-B','-m','experiments.plane_auto_occ.diagnostics',
+        subprocess.run([sys.executable,'-B','-m','plane_auto_occ.diagnostics',
                         '--checkpoint',str(checkpoint),'--case',a.case,'--output',str(dest/'diagnostics'),
                         '--device',a.device,'--resolution',str(a.diagnostics_resolution)],check=True)
     diagnose(0)
