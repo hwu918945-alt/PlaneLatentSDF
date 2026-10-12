@@ -6,7 +6,7 @@
 
 本轮从实际有 `outputs/single_case/` 的旧从头单例实验读取 metadata，而不是文档示例变量指向的冻结网络目录；只读取配置及真实 NPZ 来源，不加载旧权重或 optimizer。首轮检查目录为 `experiments/paired_worst10_20261012_v1`；缓存修复后的正式目录为 `experiments/paired_worst10_20261013_v2`。20 个阶段数据按 SHA 复制，100 份任务配置与运行代码冻结。
 
-本集群 cpudebug 同时只能提交一个 CPU 作业；先运行 20 个首代全容量池检查，再提交余下全量 500 代缓存。完整缓存任务在 59 分钟时限前可重排队，复用已完整发布且通过 hash 核验的池。GPU 拟合须同时具有 500 池完成标记和五组全预算 CUDA 验证标记。
+初轮首代全容量检查使用 cpudebug 完成。用户随后要求正式缓存和训练全部使用 GPU Slurm job；正式预缓存改为 aiaca40 / 4a40、GPU1 / CPU4 / 16GB / 24h，复用通过 hash 核验的完整池。缓存几何沿用原 Shapely/NumPy CPU 实现。拟合须同时具有 500 池完成标记和五组全预算 CUDA 验证标记。
 
 GPU QoS 最多同时提交 8 个任务、同时运行 4 个 GPU 任务。本站按版本提交五个独立 job：A、B、C、D、FULL，每个通过 [paired_worst10_arm.sh](../scripts/paired_worst10_arm.sh) 串行执行对应十位患者的 ED/ES，共 20 次独立拟合。四个版本可以同时运行，第五个由调度器排队；没有数组，也不按 25 个训练划分 worker。每次通过冻结 `paired_suite run --task-index` 重新初始化 G/D/z/Adam。失败保留并继续其他独立任务；五个版本都结束后才汇总。D/FULL 同配置、同 seed，FULL 从零独立运行。
 
@@ -25,3 +25,5 @@ GPU QoS 最多同时提交 8 个任务、同时运行 4 个 GPU 任务。本站�
 缓存 contract 新增 `coordinate_adapter_version=float32_world_valid_unique_v2`，生成新的缓存地址，避免误复用旧数值适配缓存。旧冻结实验不改写；新 v2 实验重新冻结代码和100份配置，每份与 v1 只允许离线池绝对根路径不同。五组共用同一500代池。
 
 三项回归覆盖有效池及随机状态不变、ROI无效/重复拒收可重现、边界碰撞后原锚点/scale和成对标签保留。原六项集成测试继续覆盖整层Dice精确梯度、来源选择、模型恢复和8次覆盖。正式提交前另检查20阶段首代全容量缓存，并独立重算四个原失败阶段的全部最终坐标。CPU缓存与CUDA验证是准备任务，五个训练job分别按版本串行跑20次，不产生25次worker划分。
+
+正式流程按用户最新要求使用一个GPU预缓存job，再加A/B/C/D/FULL五个GPU训练job。仅资源申请变更为A40；五个训练job只依赖全量预缓存成功，CUDA检查在提交前完成并通过标记复核。实际job ID和提交后状态保存在本地实验README与SUBMISSION.json，不进入Git。
