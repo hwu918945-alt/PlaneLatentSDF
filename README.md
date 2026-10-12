@@ -27,6 +27,8 @@ python -B -m plane_auto_occ.paired_suite run --suite /absolute/new_suite --devic
 python -B -m plane_auto_occ.paired_suite summarize --suite /absolute/new_suite
 ```
 
+本站按 A、B、C、D、FULL 各提交一个 GPU job，每个版本串行完成十位患者的 ED/ES（20 次独立拟合），五个版本结束后汇总。启动脚本见 `scripts/paired_worst10_arm.sh`；调度器最多同时运行四个版本。
+
 配置模板位于 `configs/paired_worst10/`；实际配置由 prepare 读取原 metadata 后冻结。真实数据、点池、训练输出、历史分析和安装备份不进入 Git。
 
 ## 原版默认协议（兼容入口）

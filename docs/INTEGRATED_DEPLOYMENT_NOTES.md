@@ -8,7 +8,7 @@
 
 本集群 cpudebug 同时只能提交一个 CPU 作业；先运行 20 个首代全容量池检查，再提交余下全量 500 代缓存。完整缓存任务在 59 分钟时限前可重排队，复用已完整发布且通过 hash 核验的池。GPU 拟合须同时具有 500 池完成标记和五组全预算 CUDA 验证标记。
 
-GPU QoS 最多同时提交 8 个任务、同时运行 4 个 GPU 任务，不能提交 100 元素数组。因此本站使用 [paired_worst10_workers.sh](../scripts/paired_worst10_workers.sh)：4 个 Slurm worker，各依次执行 25 个原 scientific task_index，合计仍为 0–99。每次通过冻结 `paired_suite run --task-index` 重新初始化 G/D/z/Adam。失败保留并继续其他独立任务；四个 worker 都结束后才汇总。D/FULL 同配置、同 seed，FULL 从零独立运行。
+GPU QoS 最多同时提交 8 个任务、同时运行 4 个 GPU 任务。本站按版本提交五个独立 job：A、B、C、D、FULL，每个通过 [paired_worst10_arm.sh](../scripts/paired_worst10_arm.sh) 串行执行对应十位患者的 ED/ES，共 20 次独立拟合。四个版本可以同时运行，第五个由调度器排队；没有数组，也不按 25 个训练划分 worker。每次通过冻结 `paired_suite run --task-index` 重新初始化 G/D/z/Adam。失败保留并继续其他独立任务；五个版本都结束后才汇总。D/FULL 同配置、同 seed，FULL 从零独立运行。
 
 训练及评分完成之前，`SUITE_COMPLETE.json` 不会存在。完成汇总包含全部 20 阶段，无零面阶段作为低分结果保留；执行错误或缺失阶段会使该组主均值为 null。此版本仍是最差十位患者的观测拟合诊断。
 
