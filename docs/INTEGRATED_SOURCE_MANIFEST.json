@@ -64,5 +64,20 @@
     }
   ],
   "bundle_zip_sha256": "7c9066076664a78e80f6ac8b53c11d6160d882b2f4b83a7202096daedb33d7f1",
-  "preimage_normalization": "Only one trailing blank line differs from the pinned commit; original bytes retained locally"
+  "preimage_normalization": "Only one trailing blank line differs from the pinned commit; original bytes retained locally",
+  "local_repairs": [
+    {
+      "date": "2026-10-13",
+      "authorization": "user: repair caches, document README, submit jobs",
+      "path": "plane_auto_occ/paired_pools.py",
+      "delivered_sha256": "db82fef0625df8ad2f3529be4abc4431187907ab4a7b988d71888d2cc0381b1a",
+      "repaired_sha256": "00a1cc9c300930375814cffce100a83796ee3a9ffbff70f44002788036ce659a",
+      "coordinate_adapter": "float32_world_valid_unique_v2",
+      "helper_sha256": "7a739ba3bb65350922db263749642504dbe724aee54455ea400fe2d369467f34",
+      "tests_sha256": "79bcfeec7038a0575514b8eb21c57c4a182387d34569b28df1c4906f7dcbd1e8",
+      "geometry_core_unchanged": true,
+      "network_and_loss_unchanged": true,
+      "scope": "Validate final mapped coordinates; auditable ROI rejection and original-anchor pair retries; preserve budgets and strict band."
+    }
+  ]
 }

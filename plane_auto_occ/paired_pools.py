@@ -7,6 +7,7 @@ from .area_pool import digest
 from .data import load_case
 from .inference import bounds
 from .paired_geometry import Plane
+from .paired_pool_coordinates import VERSION as COORDINATE_VERSION, repair_coordinates
 
 SCHEMA='paired_multiscale_roi_v1'
 
@@ -20,7 +21,8 @@ def contract(cfg):
         scale_weights=list(cfg.get('pair_scale_weights',[.5,.3,.2])),
         boundary_band_mm=float(cfg['boundary_band_mm']),margin_mm=float(cfg['pool_margin_mm']),
         roi_reference_observed=list(cfg['roi_reference_observed']),seed=int(cfg['seed']),
-        geometry_version='attached_e5567b511cd6_v1',cap_fraction=.4,jitter_fraction=.2)
+        geometry_version='attached_e5567b511cd6_v1',cap_fraction=.4,jitter_fraction=.2,
+        coordinate_adapter_version=COORDINATE_VERSION)
 
 
 def location(root,c,cfg,generation):
@@ -58,9 +60,10 @@ def build(case,observed,root,cfg,generation):
         scale_id=np.empty(shape,np.int8),delta_mm=np.empty(shape,np.float32),pair_id=np.empty(shape,np.int32))
     audit=[]
     for i,pos in enumerate(c['s'].numpy()):
-        plane=_classifier(c,cfg,i,basis,lower,upper);uvs=[];sources=[];scales=[];deltas=[];pairids=[];pa=[]
+        plane=_classifier(c,cfg,i,basis,lower,upper);uvs=[];sources=[];scales=[];deltas=[];pairids=[];pa=[];banks=[]
         for b,count in [(0,epcap),(1,encap)]:
             bank=plane.pairs(b,count,rng,scales=cc['scales'],weights=cc['scale_weights'])
+            banks.append(bank)
             uvs.append(bank['q'].reshape(-1,2));sources.append(np.tile([0,1] if b==0 else [2,3],count).astype(np.int8))
             scales.append(np.repeat(bank['scale_id'],2).astype(np.int8));deltas.append(np.repeat(bank['delta'],2).astype(np.float32))
             pairids.append(np.repeat(np.arange(count,dtype=np.int32),2))
@@ -69,16 +72,25 @@ def build(case,observed,root,cfg,generation):
         uvs.append(plane.uniform(ucap,rng));sources.append(np.full(ucap,4,np.int8));scales.append(np.full(ucap,-1,np.int8))
         deltas.append(np.zeros(ucap,np.float32));pairids.append(np.full(ucap,-1,np.int32))
         uv=np.concatenate(uvs);q=(uv/scale@basis[:,:2].T+float(pos)*basis[:,2]).astype(np.float32)
-        # Recheck final normalized float32 WORLD coordinates, after mapping back to mm.
-        region,valid,_=plane.classify(q.astype(np.float64)@basis[:,:2]*scale)
-        source=np.concatenate(sources);expected=np.array([0,2,0,1],np.int8)
-        if not valid.all() or not np.all(region[source<4]==expected[source[source<4]]):
+        source=np.concatenate(sources)
+        q,region,coordinate_audit=repair_coordinates(plane,q,source,banks,scale,basis,pos,rng)
+        # A pair retry updates its actual offset; preserve original source,
+        # scale assignment, pair id and anchor, and publish the audited offset.
+        for b,bank in enumerate(banks):
+            deltas[b]=np.repeat(bank['delta'],2).astype(np.float32)
+            pa[b]['capped']=int(bank['capped'].sum());pa[b]['rotated']=int(bank['rotated'].sum())
+            pa[b]['minimum_delta_mm']=float(bank['delta'].min())
+        # The adapter classifies every final WORLD coordinate, including each
+        # retry. Do not repeat expensive whole-pool polygon distances here.
+        expected=np.array([0,2,0,1],np.int8)
+        if not np.all(region[source<4]==expected[source[source<4]]):
             raise ValueError(f'Final coordinate mapping invalid: {c["case_id"]} phase{c["phase"]} plane{i}')
         if len(np.unique(q,axis=0))!=size:raise ValueError('Duplicate final float32 point: no silent replacement')
         if np.max(abs(q@c['axis'].numpy()-pos))>1e-5:raise ValueError('Point left its observed plane')
         arrays['q'][i]=q;arrays['region'][i]=region;arrays['source'][i]=source
         arrays['scale_id'][i]=np.concatenate(scales);arrays['delta_mm'][i]=np.concatenate(deltas);arrays['pair_id'][i]=np.concatenate(pairids)
-        audit.append(dict(index=c['observed'][i],pair_geometry=pa,roi_positive_points=int((region[source==4]==0).sum())))
+        audit.append(dict(index=c['observed'][i],pair_geometry=pa,coordinate_validation=coordinate_audit,
+            roi_positive_points=int((region[source==4]==0).sum())))
     target.parent.mkdir(parents=True,exist_ok=True);tmp=target.parent/(target.name+'.partial-'+uuid.uuid4().hex);tmp.mkdir()
     m=dict(schema=SCHEMA,contract=cc,source_sha256=digest(case),observed=c['observed'],generation=int(generation),
         case_id=c['case_id'],phase=c['phase'],roi_stack_mm=(np.stack([lower,upper])*scale).tolist(),
