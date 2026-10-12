@@ -1,0 +1,68 @@
+{
+  "base_repository": "https://github.com/hwu918945-alt/PlaneLatentSDF",
+  "base_commit": "9367dadef3c4e9a10c904590a01a24b39378dee4",
+  "files": [
+    {
+      "path": "plane_auto_occ/inference.py",
+      "base_sha256": "84ec3e994f8b4421a2bad2a69d05d7844fdd2914fa6ec1eebd62fed257311a02",
+      "new_sha256": "50f8504f78d926318cb38949f00085cb04bd8e6ceb9e36626d7d7342eed09335"
+    },
+    {
+      "path": "plane_auto_occ/model.py",
+      "base_sha256": "29e57a2586e096191740af4bf63a6854d3b7c5faeecfcc5982239548ae2a4dc3",
+      "new_sha256": "5202ee3cf2485b812e7aa648d92fa2a3aec7b5e4eb1059c6fabb599bcf8d8517"
+    },
+    {
+      "path": "plane_auto_occ/paired_evaluate.py",
+      "base_sha256": null,
+      "new_sha256": "a382daa587772e9ff50e1968dfcc7e2bca78ef257cd575dea255af69bc0dd296"
+    },
+    {
+      "path": "plane_auto_occ/paired_geometry.py",
+      "base_sha256": null,
+      "new_sha256": "e5567b511cd6a32de835cb0428bc70aff7e2ee8d030d66502335b527bc1ac315"
+    },
+    {
+      "path": "plane_auto_occ/paired_loss.py",
+      "base_sha256": null,
+      "new_sha256": "b7b83f830016d85b16a4b5d4b0b4ad2a667b6ac5b19a934d05ebdaaf3379b5f8"
+    },
+    {
+      "path": "plane_auto_occ/paired_pools.py",
+      "base_sha256": null,
+      "new_sha256": "db82fef0625df8ad2f3529be4abc4431187907ab4a7b988d71888d2cc0381b1a"
+    },
+    {
+      "path": "plane_auto_occ/paired_suite.py",
+      "base_sha256": null,
+      "new_sha256": "ac5ac367ee0653eff7b75797d950698dd6973359f951cd3aa229ef6512f087e5"
+    },
+    {
+      "path": "plane_auto_occ/paired_tests.py",
+      "base_sha256": null,
+      "new_sha256": "5217ebfb3c174fff69a95e46deb1ce712de7d07403c68a334df7e150c7c50759"
+    },
+    {
+      "path": "plane_auto_occ/population.py",
+      "base_sha256": "ea583d54763e26efec0a96b2198f8146059cdcd35017a547d425cef81c61e608",
+      "new_sha256": "1702a768809fe716efa3e3354a024a655e55beea1cc04200db403e811157309b"
+    },
+    {
+      "path": "plane_auto_occ/train.py",
+      "base_sha256": "f46f5c71a458a67fde9c7e8351329302132f3568798c94ce4c62c949ef8b7f24",
+      "new_sha256": "03ffc892c5e45393b96a1ed8449d21152413ab0d2f75773d4ddc4634039997ce"
+    },
+    {
+      "path": "scripts/paired_worst10_array.sh",
+      "base_sha256": null,
+      "new_sha256": "5a12bbe6e6d2142951a82b391b1825f1557d7f5e457e6b0e023e909e7a6b57f8"
+    },
+    {
+      "path": "scripts/paired_worst10_precache.sh",
+      "base_sha256": null,
+      "new_sha256": "a6d2cc50402ff16d61573a7a35f5b01c57c026f611be5b6762ca2a0e1bcf3493"
+    }
+  ],
+  "bundle_zip_sha256": "7c9066076664a78e80f6ac8b53c11d6160d882b2f4b83a7202096daedb33d7f1",
+  "preimage_normalization": "Only one trailing blank line differs from the pinned commit; original bytes retained locally"
+}

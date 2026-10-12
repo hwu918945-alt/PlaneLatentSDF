@@ -24,3 +24,14 @@ gates/
 *.nii.gz
 .env
 .env.*
+experiments/
+analysis/
+deployment_inputs/
+revision_backups/
+*.zip
+*.obj
+*.vtk
+*.vtu
+*.ply
+docs/evidence/
+docs/VALIDATION*.json

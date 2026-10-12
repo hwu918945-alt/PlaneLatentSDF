@@ -31,6 +31,8 @@ def parser():
 def main():
     a=parser().parse_args(); cfg=json.loads(Path(a.config).read_text())
     if a.steps is not None: cfg['steps']=a.steps
+    if cfg.get('pipeline_backend')=='paired_roi_exact_v1':
+        raise ValueError('Use plane_auto_occ.paired_suite: legacy train --area-pool has no ROI-source contract')
     if cfg.get('sampling_version')=='observed_area_uniform_v2' and not a.area_pool:
         raise ValueError('V2 requires --area-pool; legacy near/far sampling cannot be used')
     milestones=set(int(x) for x in a.milestones.split(',')) if a.milestones else set()
@@ -141,3 +143,4 @@ def main():
 
 
 if __name__ == '__main__': main()
+

@@ -17,7 +17,7 @@ from .area_pool import AreaSampler,digest
 from .shell_pool import build_pool as shell_pool
 from .chunked import backward_case
 from .data import load_case
-from .model import AutoOccupancy
+from .model import AutoOccupancy,model_from_config
 
 
 class VisitSampler(AreaSampler):
@@ -101,21 +101,28 @@ def fit(paths,observed,cfg,output,device='cpu',steps=None,pretrained=None,resume
     if len(set(keys))!=len(keys) or any(len(c['s'])<3 for c in cases): raise ValueError('Duplicate key or fewer than three planes')
     manifest=[dict(path=c['path'],case_id=c['case_id'],phase=c['phase'],observed=c['observed'],source_sha256=digest(c['path'])) for c in cases]
     for c,row in zip(cases,manifest):c['_source_sha256']=row['source_sha256']
-    model=AutoOccupancy(cfg['latent_dim'],cfg['width']).to(device)
+    model=model_from_config(cfg).to(device)
     prior=torch.load(pretrained,map_location='cpu',weights_only=False) if pretrained else None
     if prior:
         if prior['format']!='plane_auto_occ_v1': raise ValueError('Checkpoint schema mismatch')
         if any(cfg[k]!=prior['config'][k] for k in ('latent_dim','width')): raise ValueError('Architecture mismatch')
+        for k,default in [('decoder_final_activation','softplus'),('decoder_residual','none'),('decoder_leaky_slope',.01)]:
+            if cfg.get(k,default)!=prior['config'].get(k,default):raise ValueError(f'Pretrained decoder semantics mismatch: {k}')
         if {k[0] for k in prior['training_keys']}.intersection(k[0] for k in keys): raise ValueError('Patient leakage')
         model.load_state_dict(prior['model']); model.requires_grad_(False)
     codes=independent_codes(len(cases),cfg['latent_dim'],device)
     groups=[dict(params=codes.parameters(),lr=cfg['lr_latent'])]
     if not prior: groups.append(dict(params=model.parameters(),lr=cfg['lr_shared']))
     opt=torch.optim.Adam(groups)
-    fast=cfg.get('pipeline_backend')=='offline_batched_v1'
+    paired=cfg.get('pipeline_backend')=='paired_roi_exact_v1'
+    fast=paired or cfg.get('pipeline_backend')=='offline_batched_v1'
     if fast:
-        from .offline_store import OfflinePoolStore
-        from .fast_chunked import backward_case as backward
+        if paired:
+            from .paired_pools import PairedPoolStore as OfflinePoolStore
+            from .paired_loss import backward_case as backward
+        else:
+            from .offline_store import OfflinePoolStore
+            from .fast_chunked import backward_case as backward
         store=OfflinePoolStore(cfg['offline_pool_root'],cfg,max_loaded=cfg.get('sampler_cache_cases',len(cases)))
     else:
         store=PoolStore(out/'sampling_pools',cfg);backward=backward_case
@@ -225,3 +232,4 @@ def fit(paths,observed,cfg,output,device='cpu',steps=None,pretrained=None,resume
     (out/'TRAIN_COMPLETE.json').write_text(json.dumps(dict(step=completed,visits=visits,checkpoint_sha256=digest(out/'last.pt'),
         shared_frozen_verified=bool(prior),fit_contract=effective),indent=2))
     return out/'last.pt'
+

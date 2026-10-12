@@ -1,8 +1,35 @@
 # PlaneAutoOccupancy
 
-独立的心肌 Binary Occupancy 仓库：病例 Auto-Decoder、位置/phase 生成 plane latent、按物理层间距离插值、单头心肌占据场。当前方法基于2026-10-11修复版，安装、训练、评估和 Slurm 部署均不依赖 PlaneLatentSDF。
+独立的心肌 Binary Occupancy 仓库：病例 Auto-Decoder、位置/phase 生成 plane latent、按物理层间距离插值、单头心肌占据场。支持 2026-10-12 的成对多尺度采样、ROI Dice、最后隐藏层 LeakyReLU 和特征残差。安装、训练、评估和 Slurm 部署均不依赖 PlaneLatentSDF。
 
-## 方法与默认协议
+## 2026-10-12 集成方法与五组实验
+
+完整定义见 [部署文档](PlaneAutoOcc_Integrated_Deployment.md)；本站安装和资源调度说明见 [部署记录](docs/INTEGRATED_DEPLOYMENT_NOTES.md)。新配置使用 `python -m plane_auto_occ.paired_suite`，原默认配置及入口保留兼容性。
+
+|组|新成对多尺度 + ROI 均匀采样|BCE_all + Dice_ROI|最后隐藏激活|h2→h4 残差|
+|---|---|---|---|---|
+|A|是|仅 BCE|Softplus|无|
+|B|是|Dice 权重 1|Softplus|无|
+|C|是|同 B|LeakyReLU(0.01)|无|
+|D|是|同 B|LeakyReLU(0.01)|相加后激活|
+|FULL|是|同 D|同 D|同 D，独立从零复跑|
+
+每层 32768 点：Epi 两侧、Endo 两侧各 3072 点，独立 ROI 均匀点 20480。BCE 使用全部点，整层 soft Dice 只使用 source=4 的 ROI 点；两遍分块计算保留整层 Dice 精确梯度。五组复用同一 500 代点池，配额、点对、真实标签及来源对应关系保留。默认不以常数场监测调整 loss、学习率或停止训练。
+
+本轮 10 位患者的 ED/ES 分别从头训练，5×20 个独立模型，每模型 2000 次更新，全缓存 SAX 监督。原隐藏子集在这里已参与拟合，评分不能称为独立泛化。最终 step2000、固定原三层 bbox+20mm、160²/logit0、96³ 原生 mesh，无封盖、平滑或修复。
+
+```bash
+python -m unittest plane_auto_occ.paired_tests -v
+python -B -m plane_auto_occ.paired_suite prepare --previous-experiment /absolute/previous_single_case_run --output /absolute/new_suite
+cd /absolute/new_suite/runtime
+python -B -m plane_auto_occ.paired_suite precache --suite /absolute/new_suite --workers 3
+python -B -m plane_auto_occ.paired_suite run --suite /absolute/new_suite --device cuda
+python -B -m plane_auto_occ.paired_suite summarize --suite /absolute/new_suite
+```
+
+配置模板位于 `configs/paired_worst10/`；实际配置由 prepare 读取原 metadata 后冻结。真实数据、点池、训练输出、历史分析和安装备份不进入 Git。
+
+## 原版默认协议（兼容入口）
 
 - 128维case code，128维plane latent；宽256、五Linear/四Softplus、拼接skip的decoder。正logit为心肌，心腔/背景为负；零值面是占据分类边界，模型没有SDF距离约束。
 - 每层每次更新32768点：心肌16384、心腔8192、背景8192。观测轮廓联合bbox+20mm内按区域面积均匀提议，只排除≤0.05mm边界带；near/far仅统计。

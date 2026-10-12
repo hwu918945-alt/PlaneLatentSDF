@@ -3,7 +3,7 @@ from pathlib import Path
 import numpy as np
 import torch
 from .data import load_case
-from .model import AutoOccupancy
+from .model import AutoOccupancy,model_from_config
 from .geometry import stack_basis
 
 
@@ -18,16 +18,22 @@ def restore(checkpoint, case_path, device='cpu'):
     digest=hashlib.sha256(Path(case_path).read_bytes()).hexdigest()
     if digest != row['source_sha256']: raise ValueError('Case cache bytes differ from fit manifest')
     obs=load_case(case_path,device,row['observed'])
-    model=AutoOccupancy(ck['config']['latent_dim'],ck['config']['width']).to(device).eval()
+    model=model_from_config(ck['config']).to(device).eval()
     model.load_state_dict(ck['model']); model.requires_grad_(False)
     code=ck['codes'][idx].to(device)
     with torch.no_grad(): u=model.plane_latents(code,obs['s'].float(),obs['phase'])
+    if ck['config'].get('roi_reference_observed'):
+        obs['_roi_reference_observed']=ck['config']['roi_reference_observed']
     return model,code,u,obs,full
 
 
 def bounds(obs, margin_mm=5):
     basis=stack_basis(obs['axis'].detach().cpu().numpy())
-    b=obs.get('geometry_points',obs['boundary']).detach().cpu().numpy().reshape(-1,3) @ basis
+    geometry=obs.get('geometry_points',obs['boundary'])
+    if obs.get('_roi_reference_observed'):
+        ids=[obs['observed'].index(i) for i in obs['_roi_reference_observed']]
+        geometry=geometry[ids]
+    b=geometry.detach().cpu().numpy().reshape(-1,3) @ basis
     lower=b.min(0); upper=b.max(0)
     lower[:2]-=margin_mm/obs['scale_mm']; upper[:2]+=margin_mm/obs['scale_mm']
     lower[2]=float(obs['s'][0]); upper[2]=float(obs['s'][-1])
@@ -45,3 +51,4 @@ def query(model,q,obs,u,chunk=32768):
     device=obs['s'].device
     return torch.cat([model.field(torch.as_tensor(p,dtype=torch.float32,device=device),obs['s'],u,
                                   obs['axis'],obs['phase']).cpu() for p in np.array_split(q,max(1,int(np.ceil(len(q)/chunk))))]).numpy()
+

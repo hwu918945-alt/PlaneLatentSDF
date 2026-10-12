@@ -1,0 +1,51 @@
+{
+  "latent_dim": 128,
+  "width": 256,
+  "points": 32768,
+  "steps": 2000,
+  "lr_shared": 0.001,
+  "lr_latent": 0.001,
+  "direct_weight": 0.5,
+  "loo_weight": 1.0,
+  "latent_weight": 0.0001,
+  "seam_weight": 0.0,
+  "seam_start": 500,
+  "seam_eps_mm": 0.1,
+  "seam_points": 64,
+  "clip_grad": 5.0,
+  "log_every": 50,
+  "save_every": 250,
+  "seed": 19,
+  "threads": 2,
+  "microbatch_points": 4096,
+  "pool_capacities": [
+    131072,
+    65536,
+    65536
+  ],
+  "pool_refresh_updates": 80,
+  "pool_margin_mm": 20.0,
+  "boundary_band_mm": 0.05,
+  "near_mm": 3.0,
+  "loo_mix": 0.25,
+  "data_weight": 1.5,
+  "objective_version": "paired_bce_roi_dice_v1",
+  "sampling_version": "paired_multiscale_roi_v1",
+  "pipeline_backend": "paired_roi_exact_v1",
+  "dice_weight": 1.0,
+  "dice_eps": 1e-06,
+  "decoder_final_activation": "leaky_relu",
+  "decoder_residual": "none",
+  "decoder_leaky_slope": 0.01,
+  "pair_scales_mm": [
+    0.25,
+    0.75,
+    2.0
+  ],
+  "pair_scale_weights": [
+    0.5,
+    0.3,
+    0.2
+  ],
+  "collapse_std_threshold": 0.001
+}
