@@ -10,6 +10,13 @@ import numpy as np
 VERSION = 'float32_world_valid_unique_v2'
 
 
+def coordinate_keys(q):
+    """Compact float32 keys with numeric +0/-0 equality, like tuple keys."""
+    values=np.ascontiguousarray(q,dtype=np.float32).copy()
+    values[values==0]=0.
+    return values.view('S12').ravel().tolist()
+
+
 def map_world(uv, scale, basis, position):
     return (uv / scale @ basis[:, :2].T + float(position) * basis[:, 2]).astype(np.float32)
 
@@ -30,6 +37,7 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
         boundary_pairs_retried=[], roi_points_retried=0,
         roi_rejected_after_mapping=0, roi_rejected_duplicates=0)
     if not (invalid | duplicate).any():
+        audit['final_unique_verified']=True
         return q, region, audit
 
     # Keep complete unaffected pairs and valid ROI points. Reserve their final
@@ -45,7 +53,7 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
             bad[rows] = True
             pairs_to_retry.append((b, int(unit), rows))
         offset += 2 * count
-    used = {tuple(row) for row in q[~bad]}
+    used = set(coordinate_keys(q[~bad]))
 
     for b, unit, rows in pairs_to_retry:
         bank = banks[b]
@@ -67,7 +75,7 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
                 uv = np.stack([anchor + delta * normal, anchor - delta * normal]).astype(np.float32)
                 candidate = map_world(uv, scale, basis, position)
                 labels, accepted, _ = plane.classify(candidate.astype(np.float64) @ basis[:, :2] * scale)
-                keys = [tuple(row) for row in candidate]
+                keys = coordinate_keys(candidate)
                 if (accepted.all() and np.array_equal(labels, expected[2*b:2*b+2])
                         and keys[0] != keys[1] and all(key not in used for key in keys)):
                     q[rows] = candidate
@@ -98,8 +106,9 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
         labels, accepted, _ = plane.classify(candidate.astype(np.float64) @ basis[:, :2] * scale)
         audit['roi_rejected_after_mapping'] += int((~accepted).sum())
         filled = 0
+        candidate_keys=coordinate_keys(candidate)
         for index in np.flatnonzero(accepted):
-            key = tuple(candidate[index])
+            key = candidate_keys[index]
             if key in used:
                 audit['roi_rejected_duplicates'] += 1
                 continue
@@ -111,4 +120,5 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
         remaining = remaining[filled:]
     if len(remaining):
         raise ValueError('Insufficient unique valid ROI proposals after float32 mapping')
+    audit['final_unique_verified']=True
     return q, region, audit

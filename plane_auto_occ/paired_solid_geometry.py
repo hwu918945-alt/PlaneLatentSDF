@@ -37,7 +37,7 @@ class SolidPlane:
         valid=(distance>self.band)&(q>=self.lower).all(1)&(q<=self.upper).all(1)
         return np.where(inside,0,1).astype(np.int8),valid,np.column_stack([distance,distance])
 
-    def clearance(self,anchors,normals):
+    def clearance(self,anchors,normals,requested=None):
         """Nearest other real boundary along the solid-interior normal ray."""
         reach=float(np.linalg.norm(self.upper-self.lower)*2+1)
         result=np.full(len(anchors),np.inf)
@@ -50,8 +50,8 @@ class SolidPlane:
             distance=-signed
             accepted=signed < -1e-6
             np.minimum.at(result[start:start+len(a)],owner[accepted],distance[accepted])
-        if not np.isfinite(result).all() or (result<=0).any():
-            raise ValueError('Unsupported solid normal: no second real boundary crossing')
+        # Missing intersections describe unsupported individual rays. Let the
+        # existing same-anchor retries/audited rejection handle those units.
         return result
 
     def pairs(self,boundary,count,rng,scales=(.25,.75,2.),weights=(.5,.3,.2),adaptive=True,
@@ -64,7 +64,9 @@ class SolidPlane:
         scale_id=np.repeat(np.arange(len(scales)),quota);rng.shuffle(scale_id)
         requested=np.asarray(scales)[scale_id]*rng.uniform(.8,1.2,count)
         if _scale_id is not None:scale_id=_scale_id.copy();requested=_requested.copy()
-        h=self.clearance(a,n);delta=np.minimum(requested,.4*h) if adaptive else requested.copy()
+        h=self.clearance(a,n,requested);ray_valid=np.isfinite(h)&(h>0)
+        missing_rays=int((~ray_valid).sum())
+        delta=np.where(ray_valid,np.minimum(requested,.4*h) if adaptive else requested,0.)
         def candidate(ids):
             return np.stack([a[ids]-delta[ids,None]*n[ids],a[ids]+delta[ids,None]*n[ids]],axis=1).astype(np.float32)
         q=candidate(np.arange(count));r,ok,_=self.classify(q.reshape(-1,2))
@@ -83,18 +85,20 @@ class SolidPlane:
                 if not len(ids):break
                 rad=np.deg2rad(angle);rot=np.array([[np.cos(rad),-np.sin(rad)],[np.sin(rad),np.cos(rad)]])
                 normal=n[ids]@rot.T
-                rotated_h=self.clearance(a[ids],normal)
+                rotated_h=self.clearance(a[ids],normal,requested[ids])
+                ray_valid=np.isfinite(rotated_h)&(rotated_h>0)
+                missing_rays+=int((~ray_valid).sum())
                 for factor in (1.,.7,.4,.2):
-                    dd=np.minimum(requested[ids]*factor,.4*rotated_h)
+                    dd=np.where(ray_valid,np.minimum(requested[ids]*factor,.4*rotated_h),0.)
                     pp=np.stack([a[ids]-dd[:,None]*normal,a[ids]+dd[:,None]*normal],axis=1).astype(np.float32)
                     rr,valid,_=self.classify(pp.reshape(-1,2))
-                    success=valid.reshape(-1,2).all(1)&(rr.reshape(-1,2)==[0,1]).all(1)&~good[ids]
+                    success=ray_valid&valid.reshape(-1,2).all(1)&(rr.reshape(-1,2)==[0,1]).all(1)&~good[ids]
                     chosen=ids[success];q[chosen]=pp[success];delta[chosen]=dd[success]
                     h[chosen]=rotated_h[success]
                     good[chosen]=True;rotated[chosen]=angle!=0
             if not good.all():
                 bad=np.flatnonzero(~good)
-                rejected=[dict(arc_mm=float(arc[i]),clearance_mm=float(h[i]),round=_round) for i in bad]
+                rejected=[dict(arc_mm=float(arc[i]),clearance_mm=float(h[i]) if np.isfinite(h[i]) else None,round=_round) for i in bad]
                 if _round>=12:raise ValueError('Insufficient real-solid boundary support after audited anchor rejection')
                 # A solid contour can contain sub-band spikes/corners with no
                 # admissible bilateral pair. Condition arclength sampling on
@@ -105,6 +109,8 @@ class SolidPlane:
                 for array,name in [(q,'q'),(delta,'delta'),(h,'clearance'),(arc,'arc'),
                                    (shrunk,'shrunk'),(rotated,'rotated')]:array[bad]=replacement[name]
                 good[bad]=True;rejected.extend(replacement['unsupported_anchors_rejected'])
+                missing_rays+=replacement['missing_boundary_ray_attempts']
         return dict(q=q,good=good,initial_good=initial_good,requested=requested,delta=delta,
                     scale_id=scale_id,clearance=h,arc=arc,capped=delta<requested-1e-8,
-                    shrunk=shrunk,rotated=rotated,unsupported_anchors_rejected=rejected)
+                    shrunk=shrunk,rotated=rotated,unsupported_anchors_rejected=rejected,
+                    missing_boundary_ray_attempts=missing_rays)

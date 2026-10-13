@@ -61,3 +61,36 @@ The GPU preparation job validates both real full first generations and all
 ten CUDA two-update interfaces before generating all remaining generations.
 Five training jobs depend only on successful GPU preparation. Submission and
 gate completion do not imply scientific completion or reconstruction quality.
+
+## Exact preprocessing acceleration and degenerate-ray repair
+
+The compiled backend preserves the logical pool contract, NumPy proposal RNG,
+source quotas, pair ordering, float32 mapping and exclusion band. Read-only
+source data, polygon edges and spatial indices are cached. Float64 Numba
+segment predicates batch even/odd crossing and band checks without fastmath;
+conservative edge indexing removes only impossible candidates. Distances far
+outside the search radius use an infinity sentinel, which does not enter the
+loss or sampling decisions. Threshold cases revert to GEOS.
+
+Interior-ray intersections are evaluated by compiled segment equations. All
+potentially active offset caps, ambiguous endpoints/collinearity and missing
+rays are refined by the original GEOS operation. Consequently the stored
+capped offsets and coordinates retain the reference rounding. Compact float32
+coordinate keys preserve numeric +0/-0 equality, and the final uniqueness
+proof is reused instead of sorting the entire point array a second time.
+
+A missing second boundary intersection is now rejected as an individual ray
+within the existing same-anchor retries and audited support rejection. It no
+longer aborts unrelated valid units in an entire pool. Missing-ray attempts
+are recorded; unresolved units retain their scale/requested offset during
+supported-anchor resampling.
+
+Both real25-plane first-generation pools were regenerated at full capacity:
+all six array SHA values match the published reference byte for byte, covering
+13,107,200 points.49,152 real uniform proposals were additionally compared
+against GEOS labels and acceptance masks. The originally failed bunny gen18
+completed with8 missing-ray attempts audited. On the profiling host its first
+plane decreased12.919s→3.508s; the reference number includes profiling overhead.
+Full single-worker pools took46.18s(bunny),34.61s(dog),45.57s(repaired bunny gen18).
+These do not assert an8× end-to-end speedup from8 workers. Validation artifacts
+remain in the local experiment directories and are not pushed with code.

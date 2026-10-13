@@ -3,6 +3,8 @@ import hashlib,json,math,shutil,uuid
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 import numpy as np
+import time
+from functools import lru_cache
 from .area_pool import digest
 from .data import load_case
 from .inference import bounds
@@ -10,6 +12,26 @@ from .paired_geometry import Plane
 from .paired_pool_coordinates import VERSION as COORDINATE_VERSION, repair_coordinates
 
 SCHEMA='paired_multiscale_roi_v1'
+
+
+@lru_cache(maxsize=8)
+def _cached_case(path,observed,mtime,size):
+    c=load_case(path,observed=observed);c['_source_sha256']=digest(path)
+    return c
+
+
+@lru_cache(maxsize=64)
+def _cached_solid_plane(payload,lower,upper,band):
+    from .paired_solid_fast_geometry import CompiledSolidPlane
+    rings=[np.frombuffer(p,dtype=np.float64).reshape(-1,2) for p in payload]
+    return CompiledSolidPlane(rings,lower,upper,band)
+
+
+def load_pool_case(case,observed,cfg):
+    if cfg.get('paired_geometry_backend')=='compiled_equivalent_v1':
+        path=Path(case).resolve();stat=path.stat()
+        return _cached_case(str(path),None if observed is None else tuple(observed),stat.st_mtime_ns,stat.st_size)
+    return load_case(case,observed=observed)
 
 
 def contract(cfg):
@@ -51,17 +73,22 @@ def _classifier(c,cfg,i,basis,lower,upper):
             raise ValueError('Solid cache requires explicit real-ring paired sampling adapter')
         from .paired_solid_geometry import SolidPlane
         rings=[(ring-c['center_mm'][:2])@basis[:2,:2] for ring in c['solid_rings_mm'][i]]
+        if cfg.get('paired_geometry_backend')=='compiled_equivalent_v1':
+            return _cached_solid_plane(tuple(np.ascontiguousarray(r,np.float64).tobytes() for r in rings),
+                                      tuple(lower[:2]*c['scale_mm']),tuple(upper[:2]*c['scale_mm']),float(cfg['boundary_band_mm']))
         return SolidPlane(rings,lower[:2]*c['scale_mm'],upper[:2]*c['scale_mm'],float(cfg['boundary_band_mm']))
     scale=c['scale_mm'];epi=c['boundary'][i].numpy()@basis[:,:2]*scale;endo=c['boundary_endo'][i].numpy()@basis[:,:2]*scale
     return Plane(epi,endo,lower[:2]*scale,upper[:2]*scale,float(cfg['boundary_band_mm']))
 
 
 def build(case,observed,root,cfg,generation):
-    c=load_case(case,observed=observed);target=location(root,c,cfg,generation)
+    started=time.perf_counter();c=load_pool_case(case,observed,cfg)
+    target=location(root,c,cfg,generation)
     if target.exists():return check(target,c,cfg,generation,full=True)
     cc=contract(cfg);refs=cc['roi_reference_observed']
     if not set(refs)<=set(c['observed']):raise ValueError('ROI reference must be a subset of permitted observations')
-    ref=load_case(case,observed=refs);lower,upper,basis=bounds(ref,cc['margin_mm']);scale=c['scale_mm']
+    ref=c if refs==c['observed'] else load_case(case,observed=refs)
+    lower,upper,basis=bounds(ref,cc['margin_mm']);scale=c['scale_mm']
     identity=int(hashlib.sha256(f"{c['case_id']}:{c['phase']}".encode()).hexdigest()[:8],16)
     rng=np.random.default_rng(np.random.SeedSequence([cfg['seed'],identity,48191,generation]))
     epcap=cc['epi_pairs']*8;encap=cc['endo_pairs']*8;ucap=cc['roi_points']*8;size=cc['points']*8
@@ -84,7 +111,8 @@ def build(case,observed,root,cfg,generation):
                 initial_invalid=int((~bank['initial_good']).sum()),minimum_delta_mm=float(bank['delta'].min())))
             if c.get('schema')=='plane_auto_occ_solid_v1':
                 pa[-1].update(unsupported_anchors_rejected=bank['unsupported_anchors_rejected'],
-                              support_conditioned_arclength=True)
+                              support_conditioned_arclength=True,
+                              missing_boundary_ray_attempts=bank['missing_boundary_ray_attempts'])
         uvs.append(plane.uniform(ucap,rng));sources.append(np.full(ucap,4,np.int8));scales.append(np.full(ucap,-1,np.int8))
         deltas.append(np.zeros(ucap,np.float32));pairids.append(np.full(ucap,-1,np.int32))
         uv=np.concatenate(uvs);q=(uv/scale@basis[:,:2].T+float(pos)*basis[:,2]).astype(np.float32)
@@ -101,24 +129,28 @@ def build(case,observed,root,cfg,generation):
         expected=np.array(getattr(plane,'source_regions',[0,2,0,1]),np.int8)
         if not np.all(region[source<4]==expected[source[source<4]]):
             raise ValueError(f'Final coordinate mapping invalid: {c["case_id"]} phase{c["phase"]} plane{i}')
-        if len(np.unique(q,axis=0))!=size:raise ValueError('Duplicate final float32 point: no silent replacement')
+        if not coordinate_audit.get('final_unique_verified') and len(np.unique(q,axis=0))!=size:
+            raise ValueError('Duplicate final float32 point: no silent replacement')
         if np.max(abs(q@c['axis'].numpy()-pos))>1e-5:raise ValueError('Point left its observed plane')
         arrays['q'][i]=q;arrays['region'][i]=region;arrays['source'][i]=source
         arrays['scale_id'][i]=np.concatenate(scales);arrays['delta_mm'][i]=np.concatenate(deltas);arrays['pair_id'][i]=np.concatenate(pairids)
         audit.append(dict(index=c['observed'][i],pair_geometry=pa,coordinate_validation=coordinate_audit,
             roi_positive_points=int((region[source==4]==0).sum())))
     target.parent.mkdir(parents=True,exist_ok=True);tmp=target.parent/(target.name+'.partial-'+uuid.uuid4().hex);tmp.mkdir()
-    m=dict(schema=SCHEMA,contract=cc,source_sha256=digest(case),observed=c['observed'],generation=int(generation),
+    geometry_seconds=time.perf_counter()-started
+    m=dict(schema=SCHEMA,contract=cc,source_sha256=c.get('_source_sha256') or digest(case),observed=c['observed'],generation=int(generation),
         case_id=c['case_id'],phase=c['phase'],roi_stack_mm=(np.stack([lower,upper])*scale).tolist(),
         hidden_geometry_used=False,source_enum={'0':'epi_myo','1':'epi_background','2':'endo_myo','3':'endo_cavity','4':'roi_uniform'},
         planes=audit,files={})
     if c.get('schema')=='plane_auto_occ_solid_v1':
         m.update(case_schema=c['schema'],region_names=['inside','outside'],
+                 geometry_backend=cfg.get('paired_geometry_backend','shapely_reference'),geometry_seconds=geometry_seconds,
                  source_enum={'0':'solid_bank0_inside','1':'solid_bank0_outside',
                               '2':'solid_bank1_inside','3':'solid_bank1_outside','4':'roi_uniform'})
     try:
         for name,a in arrays.items():
             f=tmp/(name+'.npy');np.save(f,a);m['files'][f.name]=dict(bytes=f.stat().st_size,sha256=digest(f))
+        m['build_seconds']=time.perf_counter()-started
         (tmp/'metadata.json').write_text(json.dumps(m,indent=2));tmp.rename(target)
     except BaseException:shutil.rmtree(tmp,ignore_errors=True);raise
     return m

@@ -1,5 +1,7 @@
 """Topology, real-segment pair units, and solid bounds regression checks."""
 import unittest
+import tempfile,os
+from pathlib import Path
 import numpy as np
 import torch
 from .paired_solid_geometry import SolidPlane
@@ -14,6 +16,51 @@ def ring(center,radius,vertices=64):
 
 
 class SolidPairs(unittest.TestCase):
+    def test_cached_input_invalidates_after_source_file_change(self):
+        from .paired_tests import cache
+        from .paired_pools import load_pool_case
+        with tempfile.TemporaryDirectory() as folder:
+            p=Path(folder)/'case.npz';cache(p,patient='008')
+            cfg=dict(paired_geometry_backend='compiled_equivalent_v1')
+            old=load_pool_case(p,None,cfg);stamp=p.stat().st_mtime_ns
+            self.assertIs(old,load_pool_case(p,None,cfg))
+            cache(p,patient='009');os.utime(p,ns=(stamp+1000000000,stamp+1000000000))
+            new=load_pool_case(p,None,cfg)
+            self.assertEqual(new['case_id'],'009');self.assertNotEqual(old['_source_sha256'],new['_source_sha256'])
+
+    def test_missing_one_ray_does_not_abort_healthy_units(self):
+        class MissingRay(SolidPlane):
+            calls=0
+            def clearance(self,a,n,requested=None):
+                result=super().clearance(a,n,requested)
+                if self.calls==0:result[0]=np.inf
+                self.calls+=1
+                return result
+        p=MissingRay([ring([0,0],3)],[-6,-6],[6,6])
+        bank=p.pairs(0,512,np.random.default_rng(19))
+        self.assertGreater(bank['missing_boundary_ray_attempts'],0)
+        labels,valid,_=p.classify(bank['q'].reshape(-1,2))
+        self.assertTrue(valid.all());np.testing.assert_array_equal(labels,np.tile([0,1],512))
+        self.assertTrue(np.isfinite(bank['delta']).all())
+
+    def test_compiled_masks_and_capped_pair_coordinates_match_GEOS(self):
+        from .paired_solid_fast_geometry import CompiledSolidPlane
+        rings=[ring([-5,0],2),ring([-5,0],.5),ring([5,0],2)]
+        reference=SolidPlane(rings,[-10,-5],[10,5]);fast=CompiledSolidPlane(rings,[-10,-5],[10,5])
+        q=np.random.default_rng(21).uniform([-11,-6],[11,6],(8192,2))
+        a,ok,_=reference.classify(q);b,ok2,_=fast.classify(q)
+        np.testing.assert_array_equal(ok,ok2);np.testing.assert_array_equal(a[ok],b[ok2])
+        for bank in [0,1]:
+            a=reference.pairs(bank,512,np.random.default_rng(19))
+            b=fast.pairs(bank,512,np.random.default_rng(19))
+            for key in ['q','delta','scale_id','arc']:np.testing.assert_array_equal(a[key],b[key])
+
+    def test_compact_coordinate_keys_keep_numeric_zero_equality(self):
+        from .paired_pool_coordinates import coordinate_keys
+        q=np.array([[0.,-0.,1.],[-0.,0.,1.],[0.,0.,2.]],np.float32)
+        keys=coordinate_keys(q)
+        self.assertEqual(keys[0],keys[1]);self.assertNotEqual(keys[0],keys[2])
+
     def test_subband_spur_rejection_is_audited_and_preserves_scale_quotas(self):
         spur=np.array([[0,0],[5,0],[5,5],[2.52,5],[2.5,5.15],[2.48,5],[0,5]],float)
         plane=SolidPlane([spur],[-3,-3],[8,8])

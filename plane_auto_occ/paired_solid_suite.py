@@ -8,11 +8,12 @@ from datetime import datetime,timezone
 from pathlib import Path
 import numpy as np
 import torch
+import time
 from .area_pool import digest
 from .data import load_case
 from .inference import bounds,restore
 from .model import model_from_config
-from .paired_pools import build,location,check,PairedSampler,_classifier
+from .paired_pools import build,location,check,PairedSampler,_classifier,load_pool_case
 from .paired_suite import ARMS,arm_config
 from .population import fit
 from .protocol import evaluate
@@ -63,7 +64,8 @@ def prepare(repository,root):
         for record in records:
             cfg=arm_config(record['base_config'],arm,root,record['observed'])
             cfg.update(sampling_case_geometry='solid_even_odd_pairs_v1',fast_query_points=524288,
-                       prefetch_cases=1,sampler_cache_cases=1,checkpoint_seconds=300)
+                       prefetch_cases=1,sampler_cache_cases=1,checkpoint_seconds=300,
+                       paired_geometry_backend='compiled_equivalent_v1')
             config=root/'configs'/arm/f"{record['kind']}.json";write(config,cfg)
             tasks.append(dict(arm=arm,kind=record['kind'],case=record['path'],config=str(config.relative_to(root)),
                               output=f"outputs/{arm}/{record['kind']}"))
@@ -88,9 +90,11 @@ def verify(root):
     return root,read(root/'plan.json')
 
 
-def pool_audit(root,record,cfg,generation,all_points=False):
-    c=load_case(root/record['path']);path=location(root/'point_pools',c,cfg,generation)
-    m=check(path,c,cfg,generation,full=True)
+def pool_audit(root,record,cfg,generation,all_points=False,verified_metadata=None):
+    c=load_pool_case(root/record['path'],None,cfg);path=location(root/'point_pools',c,cfg,generation)
+    m=check(path,c,cfg,generation,full=verified_metadata is None)
+    if verified_metadata is not None:
+        assert m['files']==verified_metadata['files'],str(path)
     if all_points:
         lower,upper,basis=bounds(c,20.)
         q=np.load(path/'q.npy',mmap_mode='r');labels=np.load(path/'region.npy',mmap_mode='r');source=np.load(path/'source.npy',mmap_mode='r')
@@ -148,19 +152,26 @@ def precache(root,device='cuda',workers=2):
     pilot=[]
     for record in plan['records']:
         cfg=read(root/f"configs/A/{record['kind']}.json")
-        build(root/record['path'],None,root/'point_pools',cfg,0)
-        pilot.append(pool_audit(root,record,cfg,0,all_points=True))
+        metadata=build(root/record['path'],None,root/'point_pools',cfg,0)
+        pilot.append(pool_audit(root,record,cfg,0,all_points=True,verified_metadata=metadata))
     write(root/'gates/REAL_FIRST_GENERATION_COMPLETE.json',dict(records=pilot,all_final_points_reclassified=True))
     gate(root,device)
     jobs=[(record,g) for record in plan['records'] for g in range(1,50)]
     finished=list(pilot);failed=[]
+    def prepare_one(record,generation):
+        cfg=read(root/f"configs/A/{record['kind']}.json");c=load_pool_case(root/record['path'],None,cfg)
+        reused=location(root/'point_pools',c,cfg,generation).exists();start=time.perf_counter()
+        metadata=build(root/record['path'],None,root/'point_pools',cfg,generation)
+        result=pool_audit(root,record,cfg,generation,verified_metadata=metadata)
+        result.update(reused=reused,elapsed_seconds=time.perf_counter()-start)
+        return result
     with ThreadPoolExecutor(max_workers=workers) as executor:
-        future_map={executor.submit(build,root/r['path'],None,root/'point_pools',read(root/f"configs/A/{r['kind']}.json"),g):(r,g) for r,g in jobs}
+        future_map={executor.submit(prepare_one,r,g):(r,g) for r,g in jobs}
         for future in as_completed(future_map):
             record,g=future_map[future]
             try:
-                future.result();cfg=read(root/f"configs/A/{record['kind']}.json")
-                finished.append(pool_audit(root,record,cfg,g))
+                result=future.result();finished.append(result)
+                print(f"Pool {record['kind']} generation {g}: reused={result['reused']}, {result['elapsed_seconds']:.2f}s",flush=True)
             except Exception as e:failed.append(dict(kind=record['kind'],generation=g,error=repr(e)))
             write(root/'PRECACHE_STATUS.json',dict(completed=len(finished),total=100,failed=failed))
             print(f"Precache {len(finished)}/100; failures {len(failed)}",flush=True)
