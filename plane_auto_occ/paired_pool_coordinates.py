@@ -17,7 +17,7 @@ def map_world(uv, scale, basis, position):
 def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
     """Return valid unique coordinates, final labels and an explicit retry audit."""
     region, valid, _ = plane.classify(q.astype(np.float64) @ basis[:, :2] * scale)
-    expected = np.array([0, 2, 0, 1], np.int8)
+    expected = np.array(getattr(plane, 'source_regions', [0, 2, 0, 1]), np.int8)
     boundary = source < 4
     invalid = ~valid
     invalid[boundary] |= region[boundary] != expected[source[boundary]]
@@ -68,7 +68,7 @@ def repair_coordinates(plane, q, source, banks, scale, basis, position, rng):
                 candidate = map_world(uv, scale, basis, position)
                 labels, accepted, _ = plane.classify(candidate.astype(np.float64) @ basis[:, :2] * scale)
                 keys = [tuple(row) for row in candidate]
-                if (accepted.all() and np.array_equal(labels, [0, 2 if b == 0 else 1])
+                if (accepted.all() and np.array_equal(labels, expected[2*b:2*b+2])
                         and keys[0] != keys[1] and all(key not in used for key in keys)):
                     q[rows] = candidate
                     region[rows] = labels

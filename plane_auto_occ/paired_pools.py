@@ -16,13 +16,17 @@ def contract(cfg):
     points=int(cfg['points'])
     if points%32:raise ValueError('Pair/ROI budget requires points divisible by 32')
     if int(cfg['pool_refresh_updates'])!=80:raise ValueError('This protocol preserves 80-update refresh')
-    return dict(schema=SCHEMA,points=points,epi_pairs=points*3//32,endo_pairs=points*3//32,
+    result=dict(schema=SCHEMA,points=points,epi_pairs=points*3//32,endo_pairs=points*3//32,
         roi_points=points*5//8,pool_cycles=8,scales=list(cfg.get('pair_scales_mm',[.25,.75,2.])),
         scale_weights=list(cfg.get('pair_scale_weights',[.5,.3,.2])),
         boundary_band_mm=float(cfg['boundary_band_mm']),margin_mm=float(cfg['pool_margin_mm']),
         roi_reference_observed=list(cfg['roi_reference_observed']),seed=int(cfg['seed']),
         geometry_version='attached_e5567b511cd6_v1',cap_fraction=.4,jitter_fraction=.2,
         coordinate_adapter_version=COORDINATE_VERSION)
+    if cfg.get('sampling_case_geometry')=='solid_even_odd_pairs_v1':
+        result.update(case_geometry='solid_even_odd_pairs_v1',geometry_version='solid_supported_real_segments_ray_clearance_v2',
+                      source_roles='two exchangeable real-solid boundary pair banks, uniform ROI')
+    return result
 
 
 def location(root,c,cfg,generation):
@@ -42,6 +46,12 @@ def check(path,c,cfg,generation,full=False):
 
 
 def _classifier(c,cfg,i,basis,lower,upper):
+    if c.get('schema')=='plane_auto_occ_solid_v1':
+        if cfg.get('sampling_case_geometry')!='solid_even_odd_pairs_v1':
+            raise ValueError('Solid cache requires explicit real-ring paired sampling adapter')
+        from .paired_solid_geometry import SolidPlane
+        rings=[(ring-c['center_mm'][:2])@basis[:2,:2] for ring in c['solid_rings_mm'][i]]
+        return SolidPlane(rings,lower[:2]*c['scale_mm'],upper[:2]*c['scale_mm'],float(cfg['boundary_band_mm']))
     scale=c['scale_mm'];epi=c['boundary'][i].numpy()@basis[:,:2]*scale;endo=c['boundary_endo'][i].numpy()@basis[:,:2]*scale
     return Plane(epi,endo,lower[:2]*scale,upper[:2]*scale,float(cfg['boundary_band_mm']))
 
@@ -62,13 +72,19 @@ def build(case,observed,root,cfg,generation):
     for i,pos in enumerate(c['s'].numpy()):
         plane=_classifier(c,cfg,i,basis,lower,upper);uvs=[];sources=[];scales=[];deltas=[];pairids=[];pa=[];banks=[]
         for b,count in [(0,epcap),(1,encap)]:
-            bank=plane.pairs(b,count,rng,scales=cc['scales'],weights=cc['scale_weights'])
+            try:
+                bank=plane.pairs(b,count,rng,scales=cc['scales'],weights=cc['scale_weights'])
+            except ValueError as error:
+                raise ValueError(f"{c['case_id']} observed plane {c['observed'][i]} bank {b}: {error}") from error
             banks.append(bank)
             uvs.append(bank['q'].reshape(-1,2));sources.append(np.tile([0,1] if b==0 else [2,3],count).astype(np.int8))
             scales.append(np.repeat(bank['scale_id'],2).astype(np.int8));deltas.append(np.repeat(bank['delta'],2).astype(np.float32))
             pairids.append(np.repeat(np.arange(count,dtype=np.int32),2))
             pa.append(dict(boundary=b,pairs=count,capped=int(bank['capped'].sum()),rotated=int(bank['rotated'].sum()),
                 initial_invalid=int((~bank['initial_good']).sum()),minimum_delta_mm=float(bank['delta'].min())))
+            if c.get('schema')=='plane_auto_occ_solid_v1':
+                pa[-1].update(unsupported_anchors_rejected=bank['unsupported_anchors_rejected'],
+                              support_conditioned_arclength=True)
         uvs.append(plane.uniform(ucap,rng));sources.append(np.full(ucap,4,np.int8));scales.append(np.full(ucap,-1,np.int8))
         deltas.append(np.zeros(ucap,np.float32));pairids.append(np.full(ucap,-1,np.int32))
         uv=np.concatenate(uvs);q=(uv/scale@basis[:,:2].T+float(pos)*basis[:,2]).astype(np.float32)
@@ -82,7 +98,7 @@ def build(case,observed,root,cfg,generation):
             pa[b]['minimum_delta_mm']=float(bank['delta'].min())
         # The adapter classifies every final WORLD coordinate, including each
         # retry. Do not repeat expensive whole-pool polygon distances here.
-        expected=np.array([0,2,0,1],np.int8)
+        expected=np.array(getattr(plane,'source_regions',[0,2,0,1]),np.int8)
         if not np.all(region[source<4]==expected[source[source<4]]):
             raise ValueError(f'Final coordinate mapping invalid: {c["case_id"]} phase{c["phase"]} plane{i}')
         if len(np.unique(q,axis=0))!=size:raise ValueError('Duplicate final float32 point: no silent replacement')
@@ -96,6 +112,10 @@ def build(case,observed,root,cfg,generation):
         case_id=c['case_id'],phase=c['phase'],roi_stack_mm=(np.stack([lower,upper])*scale).tolist(),
         hidden_geometry_used=False,source_enum={'0':'epi_myo','1':'epi_background','2':'endo_myo','3':'endo_cavity','4':'roi_uniform'},
         planes=audit,files={})
+    if c.get('schema')=='plane_auto_occ_solid_v1':
+        m.update(case_schema=c['schema'],region_names=['inside','outside'],
+                 source_enum={'0':'solid_bank0_inside','1':'solid_bank0_outside',
+                              '2':'solid_bank1_inside','3':'solid_bank1_outside','4':'roi_uniform'})
     try:
         for name,a in arrays.items():
             f=tmp/(name+'.npy');np.save(f,a);m['files'][f.name]=dict(bytes=f.stat().st_size,sha256=digest(f))
